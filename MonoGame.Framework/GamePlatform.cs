@@ -287,10 +287,12 @@ namespace Microsoft.Xna.Framework
 		/// 
 		/// </param>
 		[System.Diagnostics.Conditional("DEBUG")]
-		public virtual void Log(string Message) {}		
-			
+		public virtual void Log(string Message) {}
+
 
         #endregion
+
+        internal abstract void InceptionLoop(Func<bool> until);
     }
 }
 

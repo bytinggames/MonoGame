@@ -56,10 +56,16 @@ namespace Microsoft.Xna.Framework
         private bool _shouldExit;
         private bool _suppressDraw;
 
-        partial void PlatformConstruct();       
+        partial void PlatformConstruct();
 
-        public Game()
+        public bool ShouldExit => _shouldExit;
+
+        private readonly bool useInception;
+        public bool UseInception => useInception;
+
+        public Game(bool _useInception = false)
         {
+            useInception = _useInception;
             _instance = this;
 
             LaunchParameters = new LaunchParameters();
@@ -247,6 +253,8 @@ namespace Microsoft.Xna.Framework
             get { return _isFixedTimeStep; }
             set { _isFixedTimeStep = value; }
         }
+
+        public double InceptionUpdatesPerFrame { get; set; } = 1d;
 
         public GameServiceContainer Services {
             get { return _services; }
@@ -1041,6 +1049,12 @@ namespace Microsoft.Xna.Framework
 
                 return object.Equals(Item, ((AddJournalEntry<T>)obj).Item);
             }
+        }
+
+
+        public void InceptionLoop(Func<bool> until)
+        {
+            Platform.InceptionLoop(until);
         }
     }
 }

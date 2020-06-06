@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -445,9 +446,17 @@ namespace MonoGame.Framework
 
         internal void RunLoop()
         {
-            Application.Idle += TickOnIdle;
-            Application.Run(Form);
-            Application.Idle -= TickOnIdle;
+            if (!Game.UseInception)
+            {
+                Application.Idle += TickOnIdle;
+                Application.Run(Form);
+                Application.Idle -= TickOnIdle;
+            }
+            else
+            {
+                Form.Show();
+                InceptionLoop(null);
+            }
 
             // We need to remove the WM_QUIT message in the message 
             // pump as it will keep us from restarting on this 
@@ -679,6 +688,90 @@ namespace MonoGame.Framework
 
             _switchingFullScreen = false;
         }
+
+
+
+        #region Inception
+
+        private int inceptionLevel = -1; // -1: no inception process has been started. Level 0 = normal level
+
+        internal void InceptionLoop(Func<bool> until)
+        {
+            if (Game.UseInception == false)
+                throw new Exception("useInception == false");
+
+            if (inceptionLevel < -1)
+                return;
+
+            inceptionLevel++;
+            int currentInceptionLevel = inceptionLevel;
+            Console.WriteLine("start inception: " + inceptionLevel);
+
+
+            if (Game.IsFixedTimeStep)
+            {
+                while (inceptionLevel >= currentInceptionLevel)
+                {
+                    UpdateWindows();
+
+                    Game.DoUpdate(new GameTime());
+
+                    Game.DoDraw(new GameTime());
+
+                    Application.DoEvents();
+
+                    if (ExitInception())
+                        inceptionLevel--;
+                }
+            }
+            else
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                long lastDraw = 0;
+
+                int drawMSWait = (int)Game.TargetElapsedTime.TotalMilliseconds;//fpsLock.HasValue ? 1000 / fpsLock.Value - 2 : -1;
+
+                double update = 0;
+
+                while (inceptionLevel >= currentInceptionLevel)
+                {
+                    Game.DoUpdate(new GameTime());
+                    update++;
+
+                    bool first = true;
+                    while (first && sw.ElapsedMilliseconds - lastDraw > drawMSWait
+                        || (Game.InceptionUpdatesPerFrame >= 0 && update >= Game.InceptionUpdatesPerFrame))
+                    {
+                        first = false;
+                        update -= Game.InceptionUpdatesPerFrame;
+                        //update = 0;
+                        lastDraw = sw.ElapsedMilliseconds;
+                        Game.DoDraw(new GameTime());
+
+                        Application.DoEvents();
+
+                        UpdateWindows();
+                    }
+
+                    if (ExitInception())
+                        inceptionLevel--;
+                }
+            }
+
+
+            bool ExitInception()
+            {
+                return (until != null && until()
+                    || Form == null || Form.IsDisposed
+                    || Game.ShouldExit);
+            }
+
+            Console.WriteLine("end inception: " + (inceptionLevel + 1));
+        }
+
+
+        #endregion
     }
 }
 
