@@ -86,17 +86,117 @@ namespace Microsoft.Xna.Framework
         {
             Sdl.Window.Show(Window.Handle);
 
-            while (true)
+            if (Game.UseInception)
             {
-                SdlRunLoop();
-                Game.Tick();
-                Threading.Run();
-                GraphicsDevice.DisposeContexts();
+                InceptionLoop(null);
+            }
+            else
+            {
+                while (true)
+                {
+                    SdlRunLoop();
+                    Game.Tick();
+                    Threading.Run();
+                    GraphicsDevice.DisposeContexts();
 
-                if (_isExiting > 0)
-                    break;
+                    if (_isExiting > 0)
+                        break;
+                }
             }
         }
+
+        #region Inception
+
+        private int inceptionLevel = -1; // -1: no inception process has been started. Level 0 = normal level
+
+        internal override void InceptionLoop(Func<bool> until)
+        {
+            if (Game.UseInception == false)
+                throw new Exception("useInception == false");
+
+            if (inceptionLevel < -1)
+                return;
+
+            inceptionLevel++;
+            int currentInceptionLevel = inceptionLevel;
+            Console.WriteLine("start inception: " + inceptionLevel);
+
+
+            if (Game.IsFixedTimeStep)
+            {
+                while (inceptionLevel >= currentInceptionLevel)
+                {
+                    SdlRunLoop();
+                    Game.DoUpdate(new GameTime());
+                    Game.DoDraw(new GameTime());
+                    //Game.Tick();
+
+                    Threading.Run();
+                    GraphicsDevice.DisposeContexts();
+
+
+
+                    //UpdateWindows();
+
+                    //Game.DoUpdate(new GameTime());
+
+                    //Game.DoDraw(new GameTime());
+
+                    //Application.DoEvents();
+
+                    if (_isExiting > 0 || ExitInception())
+                        inceptionLevel--;
+                }
+            }
+            else
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                long lastDraw = 0;
+
+                int drawMSWait = (int)Game.TargetElapsedTime.TotalMilliseconds;//fpsLock.HasValue ? 1000 / fpsLock.Value - 2 : -1;
+
+                double update = 0;
+
+                while (inceptionLevel >= currentInceptionLevel)
+                {
+                    Game.DoUpdate(new GameTime());
+                    update++;
+
+                    bool first = true;
+                    while (first && sw.ElapsedMilliseconds - lastDraw > drawMSWait
+                        || (Game.InceptionUpdatesPerFrame >= 0 && update >= Game.InceptionUpdatesPerFrame))
+                    {
+                        first = false;
+                        update -= Game.InceptionUpdatesPerFrame;
+                        //update = 0;
+                        lastDraw = sw.ElapsedMilliseconds;
+                        Game.DoDraw(new GameTime());
+
+                        Threading.Run();
+                        GraphicsDevice.DisposeContexts();
+
+                        SdlRunLoop();
+                    }
+
+                    if (ExitInception())
+                        inceptionLevel--;
+                }
+            }
+
+
+            bool ExitInception()
+            {
+                return (until != null && until()
+                    //|| Form == null || Form.IsDisposed
+                    || Game.ShouldExit);
+            }
+
+            Console.WriteLine("end inception: " + (inceptionLevel + 1));
+        }
+
+
+        #endregion
 
         private void SdlRunLoop()
         {
