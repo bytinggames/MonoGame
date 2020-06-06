@@ -149,7 +149,7 @@ namespace Microsoft.Xna.Framework.Media
 
         private void PlatformResume()
         {
-            _session.Start(null, null);
+            _session.Start(null, new Variant());
         }
 
         private void PlatformStop()
