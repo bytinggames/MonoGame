@@ -144,7 +144,7 @@ namespace Microsoft.Xna.Framework
 
                     //Application.DoEvents();
 
-                    if (_isExiting > 0 || ExitInception())
+                    if (ExitInception())
                         inceptionLevel--;
                 }
             }
@@ -187,9 +187,10 @@ namespace Microsoft.Xna.Framework
 
             bool ExitInception()
             {
-                return (until != null && until()
+                return _isExiting > 0
+                    || until != null && until()
                     //|| Form == null || Form.IsDisposed
-                    || Game.ShouldExit);
+                    || Game.ShouldExit;
             }
 
             Console.WriteLine("end inception: " + (inceptionLevel + 1));
