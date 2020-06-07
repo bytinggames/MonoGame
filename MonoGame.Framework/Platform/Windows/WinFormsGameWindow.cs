@@ -395,7 +395,8 @@ namespace MonoGame.Framework
             if (!_isResizeTickEnabled)
                 return;
             UpdateWindows();
-            Game.Tick();
+            if (!Game.UseInception)
+                Game.Tick();
             _resizeTickTimer.Enabled = true;
         }
 
