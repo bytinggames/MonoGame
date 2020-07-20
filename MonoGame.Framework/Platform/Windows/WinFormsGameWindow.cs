@@ -706,7 +706,7 @@ namespace MonoGame.Framework
 
             inceptionLevel++;
             int currentInceptionLevel = inceptionLevel;
-            Console.WriteLine("start inception: " + inceptionLevel);
+            //Console.WriteLine("start inception: " + inceptionLevel);
 
 
             if (Game.IsFixedTimeStep)
@@ -768,7 +768,7 @@ namespace MonoGame.Framework
                     || Game.ShouldExit);
             }
 
-            Console.WriteLine("end inception: " + (inceptionLevel + 1));
+            //Console.WriteLine("end inception: " + (inceptionLevel + 1));
         }
 
 
