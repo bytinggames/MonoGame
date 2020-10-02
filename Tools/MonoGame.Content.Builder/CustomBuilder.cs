@@ -32,7 +32,7 @@ namespace MonoGame.Content.Builder
             {
                 sw.Write(content);
 
-                var oggs = Directory.GetFiles(Path.Combine(dir, "sounds"), "*.ogg", SearchOption.AllDirectories);
+                var oggs = Directory.GetFiles(Path.Combine(dir, "Sounds"), "*.ogg", SearchOption.AllDirectories);
                 foreach (var file in oggs)
                 {
                     sw.Write(string.Format(@"
@@ -44,7 +44,7 @@ namespace MonoGame.Content.Builder
 ", file.Substring(dir.Length + 1)));
                 }
 
-                var wavs = Directory.GetFiles(Path.Combine(dir, "sounds"), "*.wav", SearchOption.AllDirectories);
+                var wavs = Directory.GetFiles(Path.Combine(dir, "Sounds"), "*.wav", SearchOption.AllDirectories);
                 foreach (var file in wavs)
                 {
                     sw.Write(string.Format(@"
@@ -56,7 +56,7 @@ namespace MonoGame.Content.Builder
 ", file.Substring(dir.Length + 1)));
                 }
 
-                var textures = Directory.GetFiles(Path.Combine(dir, "textures"), "*.png", SearchOption.AllDirectories);
+                var textures = Directory.GetFiles(Path.Combine(dir, "Textures"), "*.png", SearchOption.AllDirectories);
                 foreach (var file in textures)
                 {
                     sw.Write(string.Format(@"
