@@ -32,8 +32,8 @@ namespace MonoGame.Content.Builder
             {
                 sw.Write(content);
 
-                var oggs = Directory.GetFiles(Path.Combine(dir, "Sounds"), "*.ogg", SearchOption.AllDirectories);
-                foreach (var file in oggs)
+                var files = Directory.GetFiles(Path.Combine(dir, "Sounds"), "*.ogg", SearchOption.AllDirectories);
+                foreach (var file in files)
                 {
                     sw.Write(string.Format(@"
 #begin {0}
@@ -44,8 +44,8 @@ namespace MonoGame.Content.Builder
 ", file.Substring(dir.Length + 1)));
                 }
 
-                var wavs = Directory.GetFiles(Path.Combine(dir, "Sounds"), "*.wav", SearchOption.AllDirectories);
-                foreach (var file in wavs)
+                files = Directory.GetFiles(Path.Combine(dir, "Sounds"), "*.wav", SearchOption.AllDirectories);
+                foreach (var file in files)
                 {
                     sw.Write(string.Format(@"
 #begin {0}
@@ -56,8 +56,8 @@ namespace MonoGame.Content.Builder
 ", file.Substring(dir.Length + 1)));
                 }
 
-                var textures = Directory.GetFiles(Path.Combine(dir, "Textures"), "*.png", SearchOption.AllDirectories);
-                foreach (var file in textures)
+                files = Directory.GetFiles(Path.Combine(dir, "Textures"), "*.png", SearchOption.AllDirectories);
+                foreach (var file in files)
                 {
                     sw.Write(string.Format(@"
 #begin {0}
@@ -71,6 +71,16 @@ namespace MonoGame.Content.Builder
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:{0}
+", file.Substring(dir.Length + 1)));
+                }
+
+
+                files = Directory.GetFiles(Path.Combine(dir, "Textures"), "*.ani", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    sw.Write(string.Format(@"
+#begin {0}
+/copy:{0}
 ", file.Substring(dir.Length + 1)));
                 }
             }
