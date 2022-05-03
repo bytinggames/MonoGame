@@ -134,5 +134,9 @@ namespace MonoGame.Framework
 
             base.Dispose(disposing);
         }
+        internal override void InceptionLoop(Func<bool> until)
+        {
+            (Window as WinFormsGameWindow).InceptionLoop(until);
+        }
     }
 }

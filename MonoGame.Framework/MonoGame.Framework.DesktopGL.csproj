@@ -9,6 +9,7 @@
 This package provides you with MonoGame Framework that uses OpenGL for rendering and works on Windows, Linux and MacOS.</Description>
     <PackageTags>monogame;.net core;core;.net standard;standard;desktopgl</PackageTags>
     <PackageId>MonoGame.Framework.DesktopGL</PackageId>
+    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
 
   <!-- NETFX reference assemblies let us target .NET Framework on Mac/Linux without Mono -->

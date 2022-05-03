@@ -13,6 +13,8 @@ namespace MonoGame.Content.Builder
     {
         static int Main(string[] args)
         {
+            new CustomBuilder(args);
+
             // We force all stderr to redirect to stdout
             // to avoid any out of order console output.
             Console.SetError(Console.Out);
