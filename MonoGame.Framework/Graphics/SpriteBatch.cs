@@ -1500,6 +1500,32 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         /// <summary>
+        /// Draws a Triangle.
+        /// </summary>
+        /// <param name="texture">A texture.</param>
+        /// <param name="vertex1">First point of the triangle.</param>
+        /// <param name="vertex2">Second point of the triangle.</param>
+        /// <param name="vertex3">Third point of the triangle.</param>
+        /// <param name="color">A color mask.</param>
+        /// <param name="layerDepth">A depth of the layer of this triangle.</param>
+        public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color, float layerDepth = 0f)
+        {
+            CheckValid(texture);
+
+            var item = _batcher.CreateBatchItem();
+            item.Texture = texture;
+
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : layerDepth;
+
+            item.vertexTL = new VertexPositionColorTexture(new Vector3(vertex1, layerDepth), color, Vector2.Zero);
+            item.vertexTR = new VertexPositionColorTexture(new Vector3(vertex2, layerDepth), color, Vector2.Zero);
+            item.vertexBL = new VertexPositionColorTexture(new Vector3(vertex3, layerDepth), color, Vector2.Zero);
+            item.vertexBR = item.vertexBL; // omit the second triangle here. We only need the first triangle from the quad
+
+            FlushIfNeeded();
+        }
+
+        /// <summary>
         /// Immediately releases the unmanaged resources used by this object.
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
