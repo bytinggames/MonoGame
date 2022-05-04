@@ -3,6 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Microsoft.Xna.Framework.Graphics
@@ -30,6 +31,10 @@ namespace Microsoft.Xna.Framework.Graphics
 		Vector2 _texCoordTL = new Vector2 (0,0);
 		Vector2 _texCoordBR = new Vector2 (0,0);
         #endregion
+
+        public float DefaultDepth => DepthGetter.GetDepth();
+
+        public IDepthGetter DepthGetter { get; set; } = new DepthGetterDefault0();
 
         /// <summary>
         /// Constructs a <see cref="SpriteBatch"/>.
@@ -106,6 +111,8 @@ namespace Microsoft.Xna.Framework.Graphics
             }
 
             _beginCalled = true;
+
+            DepthGetter.ResetLayers();
         }
 
         /// <summary>
@@ -433,7 +440,7 @@ namespace Microsoft.Xna.Framework.Graphics
 			item.Texture = texture;
             
             // set SortKey based on SpriteSortMode.
-            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : 0;
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : DefaultDepth;
 
             Vector2 size;
 
@@ -460,7 +467,7 @@ namespace Microsoft.Xna.Framework.Graphics
                      color,
                      _texCoordTL,
                      _texCoordBR,
-                     0);
+                     DefaultDepth);
 
             FlushIfNeeded();
 		}
@@ -480,7 +487,7 @@ namespace Microsoft.Xna.Framework.Graphics
 			item.Texture = texture;
             
             // set SortKey based on SpriteSortMode.
-            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : 0;
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : DefaultDepth;
             
             if (sourceRectangle.HasValue)
             {
@@ -503,7 +510,7 @@ namespace Microsoft.Xna.Framework.Graphics
                      color,
                      _texCoordTL,
                      _texCoordBR,
-                     0);
+                     DefaultDepth);
             
             FlushIfNeeded();
 		}
@@ -522,7 +529,7 @@ namespace Microsoft.Xna.Framework.Graphics
 			item.Texture = texture;
             
             // set SortKey based on SpriteSortMode.
-            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : 0;
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : DefaultDepth;
             
             item.Set(position.X,
                      position.Y,
@@ -531,7 +538,7 @@ namespace Microsoft.Xna.Framework.Graphics
                      color,
                      Vector2.Zero,
                      Vector2.One,
-                     0);
+                     DefaultDepth);
 
             FlushIfNeeded();
 		}
@@ -550,7 +557,7 @@ namespace Microsoft.Xna.Framework.Graphics
             item.Texture = texture;
             
             // set SortKey based on SpriteSortMode.
-            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : 0;
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : DefaultDepth;
             
             item.Set(destinationRectangle.X,
                      destinationRectangle.Y,
@@ -559,7 +566,7 @@ namespace Microsoft.Xna.Framework.Graphics
                      color,
                      Vector2.Zero,
                      Vector2.One,
-                     0);
+                     DefaultDepth);
             
             FlushIfNeeded();
 		}
@@ -575,7 +582,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		{
             CheckValid(spriteFont, text);
             
-            float sortKey = (_sortMode == SpriteSortMode.Texture) ? spriteFont.Texture.SortingKey : 0;
+            float sortKey = (_sortMode == SpriteSortMode.Texture) ? spriteFont.Texture.SortingKey : DefaultDepth;
 
             var offset = Vector2.Zero;
             var firstGlyphOfLine = true;
@@ -633,7 +640,7 @@ namespace Microsoft.Xna.Framework.Graphics
                          color,
                          _texCoordTL,
                          _texCoordBR,
-                         0);
+                         DefaultDepth);
                 
                 offset.X += pCurrentGlyph->Width + pCurrentGlyph->RightSideBearing;
             }
@@ -1043,7 +1050,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		{
             CheckValid(spriteFont, text);
             
-            float sortKey =  (_sortMode == SpriteSortMode.Texture) ? spriteFont.Texture.SortingKey : 0;
+            float sortKey =  (_sortMode == SpriteSortMode.Texture) ? spriteFont.Texture.SortingKey : DefaultDepth;
 
             var offset = Vector2.Zero;
             var firstGlyphOfLine = true;
@@ -1101,7 +1108,7 @@ namespace Microsoft.Xna.Framework.Graphics
                          color,
                          _texCoordTL,
                          _texCoordBR,
-                         0);
+                         DefaultDepth);
 
                 offset.X += pCurrentGlyph->Width + pCurrentGlyph->RightSideBearing;
             }
@@ -1499,7 +1506,10 @@ namespace Microsoft.Xna.Framework.Graphics
             FlushIfNeeded();
         }
 
-        public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color, float layerDepth = 0f)
+        public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color)
+            => DrawTriangle(texture, vertex1, vertex2, vertex3, color, DefaultDepth);
+
+        public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color, float layerDepth)
         {
             CheckValid(texture);
 
@@ -1508,42 +1518,48 @@ namespace Microsoft.Xna.Framework.Graphics
             FlushIfNeeded();
         }
 
-        private void DrawTriangleInternal(Texture2D texture, Vector2 tl, Vector2 tr, Vector2 bl, Color color, float depth)
+        private void DrawTriangleInternal(Texture2D texture, Vector2 tl, Vector2 tr, Vector2 bl, Color color, float layerDepth)
         {
             var item = _batcher.CreateBatchItem();
             item.Texture = texture;
 
-            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : depth;
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : layerDepth;
 
-            item.vertexTL = new VertexPositionColorTexture(new Vector3(tl, depth), color, Vector2.Zero);
-            item.vertexTR = new VertexPositionColorTexture(new Vector3(tr, depth), color, Vector2.Zero);
-            item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, depth), color, Vector2.Zero);
+            item.vertexTL = new VertexPositionColorTexture(new Vector3(tl, layerDepth), color, Vector2.Zero);
+            item.vertexTR = new VertexPositionColorTexture(new Vector3(tr, layerDepth), color, Vector2.Zero);
+            item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, layerDepth), color, Vector2.Zero);
             item.vertexBR = item.vertexBL;
         }
 
-        public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color, float depth = 0f)
+        public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color)
+            => DrawQuad(texture, topLeft, topRight, bottomLeft, bottomRight, color, DefaultDepth);
+
+        public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color, float layerDepth)
         {
             CheckValid(texture);
 
-            DrawQuadInternal(texture, topLeft, topRight, bottomLeft, bottomRight, color, depth);
+            DrawQuadInternal(texture, topLeft, topRight, bottomLeft, bottomRight, color, layerDepth);
 
             FlushIfNeeded();
         }
 
-        private void DrawQuadInternal(Texture2D texture, Vector2 tl, Vector2 tr, Vector2 bl, Vector2 br, Color color, float depth)
+        private void DrawQuadInternal(Texture2D texture, Vector2 tl, Vector2 tr, Vector2 bl, Vector2 br, Color color, float layerDepth)
         {
             var item = _batcher.CreateBatchItem();
             item.Texture = texture;
 
-            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : depth;
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : layerDepth;
 
-            item.vertexTL = new VertexPositionColorTexture(new Vector3(tl, depth), color, Vector2.Zero);
-            item.vertexTR = new VertexPositionColorTexture(new Vector3(tr, depth), color, Vector2.Zero);
-            item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, depth), color, Vector2.Zero);
-            item.vertexBR = new VertexPositionColorTexture(new Vector3(br, depth), color, Vector2.Zero);
+            item.vertexTL = new VertexPositionColorTexture(new Vector3(tl, layerDepth), color, Vector2.Zero);
+            item.vertexTR = new VertexPositionColorTexture(new Vector3(tr, layerDepth), color, Vector2.Zero);
+            item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, layerDepth), color, Vector2.Zero);
+            item.vertexBR = new VertexPositionColorTexture(new Vector3(br, layerDepth), color, Vector2.Zero);
         }
 
-        public void DrawPolygon(Texture2D texture, Vector2[] vertices, Color color, float depth = 0f)
+        public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color)
+            => DrawPolygon(texture, vertices, color, DefaultDepth);
+
+        public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, float layerDepth)
         {
             CheckValid(texture);
 
@@ -1552,15 +1568,81 @@ namespace Microsoft.Xna.Framework.Graphics
 
             int i;
             // draw quads
-            for (i = 3; i < vertices.Length; i += 2)
+            for (i = 3; i < vertices.Count; i += 2)
             {
-                DrawQuadInternal(texture, vertices[0], vertices[i - 2], vertices[i], vertices[i - 1], color, depth);
+                DrawQuadInternal(texture, vertices[0], vertices[i - 2], vertices[i], vertices[i - 1], color, layerDepth);
             }
-
-            if (i == vertices.Length) // did we miss [vertices.Length - 1]?
+            
+            if (i == vertices.Count) // did we miss [vertices.Length - 1]?
             {
                 // draw that remaining triangle
-                DrawTriangleInternal(texture, vertices[0], vertices[i - 2], vertices[i - 1], color, depth);
+                DrawTriangleInternal(texture, vertices[0], vertices[i - 2], vertices[i - 1], color, layerDepth);
+            }
+
+            FlushIfNeeded();
+        }
+
+        public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, Vector2 offset)
+            => DrawPolygon(texture, vertices, color, DefaultDepth);
+
+        public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, Vector2 offset, float layerDepth)
+        {
+            if (vertices.Count < 3)
+                return;
+
+            CheckValid(texture);
+
+            // for every two triangles draw a quad.
+            // if a triangle remains, draw it
+
+            Vector2 v0 = vertices[0] + offset;
+
+            int i;
+            // draw quads
+            for (i = 3; i < vertices.Count; i += 2)
+            {
+                DrawQuadInternal(texture, v0, vertices[i - 2] + offset, vertices[i] + offset, vertices[i - 1] + offset, color, layerDepth);
+            }
+
+            if (i == vertices.Count) // did we miss [vertices.Length - 1]?
+            {
+                // draw that remaining triangle
+                DrawTriangleInternal(texture, v0, vertices[i - 2] + offset, vertices[i - 1] + offset, color, layerDepth);
+            }
+
+            FlushIfNeeded();
+        }
+
+        /// <inheritdoc cref="DrawStrip(Texture2D, IList{Vector2}, Color, float)"/>
+        public void DrawStrip(Texture2D texture, IList<Vector2> vertices, Color color)
+            => DrawStrip(texture, vertices, color, DefaultDepth);
+
+        /// <summary>
+        /// <code>
+        /// Vertices format:
+        /// 1--3--5--7--8
+        /// |  |  |  | /
+        /// 0--2--4--6
+        /// </code>
+        /// </summary>
+        public void DrawStrip(Texture2D texture, IList<Vector2> vertices, Color color, float layerDepth)
+        {
+            CheckValid(texture);
+
+            // for every two triangles draw a quad.
+            // if a triangle remains, draw it
+
+            int i;
+            // draw quads
+            for (i = 3; i < vertices.Count; i += 2)
+            {
+                DrawQuadInternal(texture, vertices[i - 2], vertices[i], vertices[i - 3], vertices[i - 1], color, layerDepth);
+            }
+
+            if (i == vertices.Count) // did we miss [vertices.Length - 1]?
+            {
+                // draw that remaining triangle
+                DrawTriangleInternal(texture, vertices[i - 2], vertices[i - 1], vertices[i - 3], color, layerDepth);
             }
 
             FlushIfNeeded();
