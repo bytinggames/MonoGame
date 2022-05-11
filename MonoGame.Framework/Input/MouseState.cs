@@ -251,7 +251,7 @@ namespace Microsoft.Xna.Framework.Input
             {
                 return ((_buttons & LeftButtonFlag) > 0) ? ButtonState.Pressed : ButtonState.Released;
             }
-            internal set
+            set
             {
                 if (value == ButtonState.Pressed)
                 {
