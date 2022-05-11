@@ -34,7 +34,10 @@ namespace Microsoft.Xna.Framework.Graphics
 		/// </summary>
 		public Glyph[] Glyphs { get { return _glyphs; } }
 
-		class CharComparer: IEqualityComparer<char>
+        public int DefaultCharacterHeight { get; private set; }
+        public int DefaultCharacterYOffset { get; private set; }
+
+        class CharComparer: IEqualityComparer<char>
 		{
 			public bool Equals(char x, char y)
 			{
@@ -109,7 +112,11 @@ namespace Microsoft.Xna.Framework.Graphics
             Array.Reverse(_regions);
 
 			DefaultCharacter = defaultCharacter;
-		}
+
+            var defaultGlyph = GetGlyphs()[defaultCharacter ?? 'A'];
+            DefaultCharacterHeight = defaultGlyph.BoundsInTexture.Height;
+            DefaultCharacterYOffset = defaultGlyph.Cropping.Y;
+        }
 
         /// <summary>
         /// Gets the texture that this SpriteFont draws from.
