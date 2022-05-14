@@ -1551,9 +1551,9 @@ namespace Microsoft.Xna.Framework.Graphics
             item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : layerDepth;
 
             item.vertexTL = new VertexPositionColorTexture(new Vector3(tl, layerDepth), color, Vector2.Zero);
-            item.vertexTR = new VertexPositionColorTexture(new Vector3(tr, layerDepth), color, Vector2.Zero);
-            item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, layerDepth), color, Vector2.Zero);
-            item.vertexBR = new VertexPositionColorTexture(new Vector3(br, layerDepth), color, Vector2.Zero);
+            item.vertexTR = new VertexPositionColorTexture(new Vector3(tr, layerDepth), color, Vector2.UnitX);
+            item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, layerDepth), color, Vector2.UnitY);
+            item.vertexBR = new VertexPositionColorTexture(new Vector3(br, layerDepth), color, Vector2.One);
         }
 
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color)
