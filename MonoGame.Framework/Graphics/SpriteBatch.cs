@@ -32,9 +32,12 @@ namespace Microsoft.Xna.Framework.Graphics
 		Vector2 _texCoordBR = new Vector2 (0,0);
         #endregion
 
-        public float DefaultDepth => DepthGetter.GetDepth();
+        public float DefaultDepth
+        {
+            get { return DepthGetter.GetDepth(); }
+        }
 
-        public IDepthGetter DepthGetter { get; set; } = new DepthGetterDefault0();
+        public IDepthGetter DepthGetter { get; set; }
 
         /// <summary>
         /// Constructs a <see cref="SpriteBatch"/>.
@@ -66,7 +69,9 @@ namespace Microsoft.Xna.Framework.Graphics
             _batcher = new SpriteBatcher(graphicsDevice, capacity);
 
             _beginCalled = false;
-		}
+
+            DepthGetter = new DepthGetterDefault0();
+        }
 
         /// <summary>
         /// Begins a new sprite and text batch with the specified render state.
@@ -1507,7 +1512,9 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color)
-            => DrawTriangle(texture, vertex1, vertex2, vertex3, color, DefaultDepth);
+        {
+            DrawTriangle(texture, vertex1, vertex2, vertex3, color, DefaultDepth);
+        }
 
         public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color, float layerDepth)
         {
@@ -1532,7 +1539,9 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color)
-            => DrawQuad(texture, topLeft, topRight, bottomLeft, bottomRight, color, DefaultDepth);
+        {
+            DrawQuad(texture, topLeft, topRight, bottomLeft, bottomRight, color, DefaultDepth);
+        }
 
         public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color, float layerDepth)
         {
@@ -1557,7 +1566,9 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color)
-            => DrawPolygon(texture, vertices, color, DefaultDepth);
+        {
+            DrawPolygon(texture, vertices, color, DefaultDepth);
+        }
 
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, float layerDepth)
         {
@@ -1583,7 +1594,9 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, Vector2 offset)
-            => DrawPolygon(texture, vertices, color, DefaultDepth);
+        {
+            DrawPolygon(texture, vertices, color, DefaultDepth);
+        }
 
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, Vector2 offset, float layerDepth)
         {
@@ -1615,7 +1628,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
         /// <inheritdoc cref="DrawStrip(Texture2D, IList{Vector2}, Color, float)"/>
         public void DrawStrip(Texture2D texture, IList<Vector2> vertices, Color color)
-            => DrawStrip(texture, vertices, color, DefaultDepth);
+        {
+            DrawStrip(texture, vertices, color, DefaultDepth);
+        }
 
         /// <summary>
         /// <code>

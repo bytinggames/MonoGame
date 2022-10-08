@@ -6,7 +6,7 @@ namespace Microsoft.Xna.Framework.Graphics
 {
     class DepthGetterDefault0 : IDepthGetter
     {
-        public float GetDepth() => 0;
+        public float GetDepth() { return 0f; }
         public void ResetLayers() { }
     }
 }
