@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////
 
 var target = Argument("build-target", "Default");
-var version = Argument("build-version", EnvironmentVariable("BUILD_NUMBER") ?? "3.8.1.1");
+var version = Argument("build-version", EnvironmentVariable("BUILD_NUMBER") ?? "3.8.1.2");
 var repositoryUrl = Argument("repository-url", "https://github.com/bytinggames/MonoGame");
 var configuration = Argument("build-configuration", "Release");
 
@@ -60,7 +60,7 @@ private void ParseVersion()
 {
     if (!string.IsNullOrEmpty(EnvironmentVariable("GITHUB_ACTIONS")))
     {
-        version = "3.8.1." + EnvironmentVariable("GITHUB_RUN_NUMBER");
+        version = "3.8.1.1" + EnvironmentVariable("GITHUB_RUN_NUMBER");
 
         if (EnvironmentVariable("GITHUB_REPOSITORY") != "MonoGame/MonoGame")
             version += "-" + EnvironmentVariable("GITHUB_REPOSITORY_OWNER");
