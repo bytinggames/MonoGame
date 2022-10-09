@@ -6,11 +6,12 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <Description>MSBuild task to automatically build content for MonoGame.</Description>
+    <PackageId>BytingGames.$(AssemblyName)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="MonoGame.Content.Builder.Task.props" PackagePath="build" />
-    <Content Include="MonoGame.Content.Builder.Task.targets" PackagePath="build" />
+    <Content Include="BytingGames.MonoGame.Content.Builder.Task.props" PackagePath="build" />
+    <Content Include="BytingGames.MonoGame.Content.Builder.Task.targets" PackagePath="build" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,6 +11,7 @@
     <AssemblyName>mgcb-editor-linux</AssemblyName>
     <AssemblyTitle>MGCB Editor</AssemblyTitle>
     <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+	<PackageId>bytinggames-$(AssemblyName)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

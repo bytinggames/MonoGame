@@ -8,7 +8,7 @@
     <BaseOutputPath>..\..\Artifacts\MonoGame.Content.Builder.Editor.Launcher\Windows</BaseOutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>mgcb-editor-windows</ToolCommandName>
-    <PackageId>dotnet-mgcb-editor-windows</PackageId>
+    <PackageId>bytinggames-dotnet-mgcb-editor-windows</PackageId>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <AssemblyName>mgcb-editor-windows</AssemblyName>
     <ImplicitUsings>true</ImplicitUsings>

@@ -8,7 +8,7 @@
     <BaseOutputPath>..\..\Artifacts\MonoGame.Content.Builder.Editor.Launcher\Mac</BaseOutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>mgcb-editor-mac</ToolCommandName>
-    <PackageId>dotnet-mgcb-editor-mac</PackageId>
+    <PackageId>bytinggames-dotnet-mgcb-editor-mac</PackageId>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <AssemblyName>mgcb-editor-mac</AssemblyName>
     <ImplicitUsings>true</ImplicitUsings>

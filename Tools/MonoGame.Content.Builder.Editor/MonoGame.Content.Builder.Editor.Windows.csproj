@@ -13,6 +13,7 @@
     <AssemblyName>mgcb-editor-windows</AssemblyName>
     <AssemblyTitle>MGCB Editor</AssemblyTitle>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+	<PackageId>bytinggames-$(AssemblyName)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

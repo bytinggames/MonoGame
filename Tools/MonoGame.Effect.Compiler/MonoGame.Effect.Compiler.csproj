@@ -8,7 +8,7 @@
     <BaseOutputPath>..\..\Artifacts\MonoGame.Effect.Compiler</BaseOutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>mgfxc</ToolCommandName>
-    <PackageId>dotnet-mgfxc</PackageId>
+    <PackageId>bytinggames-dotnet-mgfxc</PackageId>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <AssemblyName>mgfxc</AssemblyName>
     <UseAppHost>true</UseAppHost>

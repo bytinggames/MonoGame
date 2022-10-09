@@ -2,8 +2,8 @@
   <PropertyGroup>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageProjectUrl>https://www.monogame.net/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/MonoGame/MonoGame</RepositoryUrl>
-    <Authors>MonoGame Team</Authors>
+    <RepositoryUrl>https://github.com/bytinggames/MonoGame</RepositoryUrl>
+    <Authors>MonoGame Team, Byting Games</Authors>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
   </PropertyGroup>
 

@@ -9,7 +9,7 @@
     <Description>This package allows you to package up your MonoGame game into a flatpak installer for Linux.</Description>
     <PackageTags>monogame;.net core;core;packaging;flatpak</PackageTags>
     <Authors>MonoGame Team</Authors>
-    <PackageId>MonoGame.Packaging.Flatpak</PackageId>
+    <PackageId>BytingGames.MonoGame.Packaging.Flatpak</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
