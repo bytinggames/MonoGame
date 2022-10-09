@@ -1515,12 +1515,19 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             DrawTriangle(texture, vertex1, vertex2, vertex3, color, DefaultDepth);
         }
-
         public void DrawTriangle(Texture2D texture, Vector2 vertex1, Vector2 vertex2, Vector2 vertex3, Color color, float layerDepth)
         {
             CheckValid(texture);
 
             DrawTriangleInternal(texture, vertex1, vertex2, vertex3, color, layerDepth);
+
+            FlushIfNeeded();
+        }
+        public void DrawTriangle(Texture2D texture, IList<VertexPositionColorTexture> vertices)
+        {
+            CheckValid(texture);
+
+            DrawTriangleInternal(texture, vertices[0], vertices[1], vertices[2]);
 
             FlushIfNeeded();
         }
@@ -1537,17 +1544,28 @@ namespace Microsoft.Xna.Framework.Graphics
             item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, layerDepth), color, Vector2.Zero);
             item.vertexBR = item.vertexBL;
         }
+        private void DrawTriangleInternal(Texture2D texture, VertexPositionColorTexture tl, VertexPositionColorTexture tr, VertexPositionColorTexture bl)
+        {
+			DrawQuadInternal(texture, tl, tr, bl, bl);
+        }
 
         public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color)
         {
             DrawQuad(texture, topLeft, topRight, bottomLeft, bottomRight, color, DefaultDepth);
         }
-
         public void DrawQuad(Texture2D texture, Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Color color, float layerDepth)
         {
             CheckValid(texture);
 
             DrawQuadInternal(texture, topLeft, topRight, bottomLeft, bottomRight, color, layerDepth);
+
+            FlushIfNeeded();
+        }
+        public void DrawQuad(Texture2D texture, IList<VertexPositionColorTexture> vertices)
+        {
+            CheckValid(texture);
+
+            DrawQuadInternal(texture, vertices[0], vertices[1], vertices[2], vertices[3]);
 
             FlushIfNeeded();
         }
@@ -1564,12 +1582,23 @@ namespace Microsoft.Xna.Framework.Graphics
             item.vertexBL = new VertexPositionColorTexture(new Vector3(bl, layerDepth), color, Vector2.UnitY);
             item.vertexBR = new VertexPositionColorTexture(new Vector3(br, layerDepth), color, Vector2.One);
         }
+        private void DrawQuadInternal(Texture2D texture, VertexPositionColorTexture vertexTL, VertexPositionColorTexture vertexTR, VertexPositionColorTexture vertexBL, VertexPositionColorTexture vertexBR)
+        {
+            var item = _batcher.CreateBatchItem();
+            item.Texture = texture;
+
+            item.SortKey = _sortMode == SpriteSortMode.Texture ? texture.SortingKey : vertexTL.Position.Z;
+
+            item.vertexTL = vertexTL;
+            item.vertexTR = vertexTR;
+            item.vertexBL = vertexBL;
+            item.vertexBR = vertexBR;
+        }
 
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color)
         {
             DrawPolygon(texture, vertices, color, DefaultDepth);
         }
-
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, float layerDepth)
         {
             CheckValid(texture);
@@ -1592,12 +1621,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
             FlushIfNeeded();
         }
-
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, Vector2 offset)
         {
-            DrawPolygon(texture, vertices, color, DefaultDepth);
+            DrawPolygon(texture, vertices, color, offset, DefaultDepth);
         }
-
         public void DrawPolygon(Texture2D texture, IList<Vector2> vertices, Color color, Vector2 offset, float layerDepth)
         {
             if (vertices.Count < 3)
@@ -1621,6 +1648,28 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 // draw that remaining triangle
                 DrawTriangleInternal(texture, v0, vertices[i - 2] + offset, vertices[i - 1] + offset, color, layerDepth);
+            }
+
+            FlushIfNeeded();
+        }
+        public void DrawPolygon(Texture2D texture, IList<VertexPositionColorTexture> vertices)
+        {
+            CheckValid(texture);
+
+            // for every two triangles draw a quad.
+            // if a triangle remains, draw it
+
+            int i;
+            // draw quads
+            for (i = 3; i < vertices.Count; i += 2)
+            {
+                DrawQuadInternal(texture, vertices[0], vertices[i - 2], vertices[i], vertices[i - 1]);
+            }
+
+            if (i == vertices.Count) // did we miss [vertices.Length - 1]?
+            {
+                // draw that remaining triangle
+                DrawTriangleInternal(texture, vertices[0], vertices[i - 2], vertices[i - 1]);
             }
 
             FlushIfNeeded();
@@ -1658,6 +1707,37 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 // draw that remaining triangle
                 DrawTriangleInternal(texture, vertices[i - 2], vertices[i - 1], vertices[i - 3], color, layerDepth);
+            }
+
+            FlushIfNeeded();
+        }
+
+        /// <summary>
+        /// <code>
+        /// Vertices format:
+        /// 1--3--5--7--8
+        /// |  |  |  | /
+        /// 0--2--4--6
+        /// </code>
+        /// </summary>
+        public void DrawStrip(Texture2D texture, IList<VertexPositionColorTexture> vertices)
+        {
+            CheckValid(texture);
+
+            // for every two triangles draw a quad.
+            // if a triangle remains, draw it
+
+            int i;
+            // draw quads
+            for (i = 3; i < vertices.Count; i += 2)
+            {
+                DrawQuadInternal(texture, vertices[i - 2], vertices[i], vertices[i - 3], vertices[i - 1]);
+            }
+
+            if (i == vertices.Count) // did we miss [vertices.Length - 1]?
+            {
+                // draw that remaining triangle
+                DrawTriangleInternal(texture, vertices[i - 2], vertices[i - 1], vertices[i - 3]);
             }
 
             FlushIfNeeded();
