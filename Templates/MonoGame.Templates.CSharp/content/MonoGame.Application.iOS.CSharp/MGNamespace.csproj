@@ -6,8 +6,8 @@
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2-develop" />
-    <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.1.2-develop" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.4-develop" />
+    <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.1.4-develop" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

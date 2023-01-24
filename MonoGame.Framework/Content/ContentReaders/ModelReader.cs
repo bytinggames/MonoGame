@@ -167,7 +167,8 @@ namespace Microsoft.Xna.Framework.Content
 
 				mesh.Name = name;
 				mesh.ParentBone = bones[parentBoneIndex];
-				mesh.ParentBone.AddMesh(mesh);
+                mesh.ParentBone.Transform *= Matrix.CreateScale(0.01f); // fixes extremely large models
+                mesh.ParentBone.AddMesh(mesh);
 				mesh.BoundingSphere = boundingSphere;
 				meshes.Add(mesh);
             }
