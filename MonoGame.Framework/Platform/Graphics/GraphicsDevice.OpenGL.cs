@@ -173,7 +173,7 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        private void ApplyAttribs(Shader shader, int baseVertex)
+        private void ApplyAttribs(Shader shader, int[] baseVertexPerSlot)
         {
             var programHash = ShaderProgramHash;
             var bindingsChanged = false;
@@ -185,7 +185,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 var attrInfo = vertexDeclaration.GetAttributeInfo(shader, programHash);
 
                 var vertexStride = vertexDeclaration.VertexStride;
-                var offset = (IntPtr)(vertexDeclaration.VertexStride * (baseVertex + vertexBufferBinding.VertexOffset));
+                var offset = (IntPtr)(vertexDeclaration.VertexStride * (slot != 0 ? 0 : (baseVertexPerSlot[slot % baseVertexPerSlot.Length] + vertexBufferBinding.VertexOffset)));
 
                 if (!_attribsDirty &&
                     slot < _activeBufferBindingInfosCount &&
@@ -1060,7 +1060,7 @@ namespace Microsoft.Xna.Framework.Graphics
 			var indexElementCount = GetElementCountArray(primitiveType, primitiveCount);
 			var target = PrimitiveTypeGL(primitiveType);
 
-            ApplyAttribs(_vertexShader, baseVertex);
+            ApplyAttribs(_vertexShader, new int[] { baseVertex });
 
             GL.DrawElements(target,
                                      indexElementCount,
@@ -1107,7 +1107,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             ApplyState(true);   
 
-            ApplyAttribs(_vertexShader, 0);
+            ApplyAttribs(_vertexShader, new int[] { 0 });
 
             if (vertexStart < 0)
                 vertexStart = 0;
@@ -1212,7 +1212,7 @@ namespace Microsoft.Xna.Framework.Graphics
             var indexElementCount = GetElementCountArray(primitiveType, primitiveCount);
             var target = PrimitiveTypeGL(primitiveType);
 
-            ApplyAttribs(_vertexShader, baseVertex);
+            ApplyAttribs(_vertexShader, new int[] { baseVertex, baseInstance });
 
             if (baseInstance > 0)
             {
