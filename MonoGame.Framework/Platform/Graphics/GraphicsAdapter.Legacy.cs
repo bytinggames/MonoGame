@@ -417,5 +417,32 @@ namespace Microsoft.Xna.Framework.Graphics
         private const int HORZRES = 8;
         private const int VERTRES = 10;
 #endif
+
+        public static int GetCurrentDisplayIndex()
+        {
+            return Sdl.Display.GetWindowDisplayIndex(SdlGameWindow.Instance.Handle);
+        }
+        public static int GetDisplayCount()
+        {
+            return Sdl.Display.GetNumVideoDisplays();
+        }
+
+        public static Rectangle GetCurrentDisplayBounds()
+        {
+            return GetDisplayBounds(GetCurrentDisplayIndex());
+        }
+
+        public static Rectangle GetDisplayBounds(int displayIndex)
+        {
+#if DESKTOPGL
+            Sdl.Rectangle rect;
+            Sdl.Display.GetBounds(displayIndex, out rect);
+            
+            return new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+#else
+            var displayMode = CurrentDisplayMode;
+            return new Rectangle(0, 0, displayMode.Width, displayMode.Height);
+#endif
+        }
     }
 }
