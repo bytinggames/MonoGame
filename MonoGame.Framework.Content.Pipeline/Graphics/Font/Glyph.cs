@@ -15,7 +15,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
     }
 
     // Represents a single character within a font.
-    internal class Glyph
+    public class Glyph
     {
         // Constructor.
         public Glyph(char character, GlyphData data)
@@ -31,7 +31,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
         public GlyphData Data;
     }
 
-    internal class GlyphData
+    public class GlyphData
     {
         // Constructor.
         public GlyphData(uint glyphIndex, BitmapContent bitmap, Rectangle? subrect = null)

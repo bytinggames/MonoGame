@@ -87,12 +87,14 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
                     GlyphCropper.Crop(glyph);
                 }
 
+                ModifyGlyphs(glyphData);
+
                 // We need to know how to pack the glyphs.
                 bool requiresPot, requiresSquare;
                 texProfile.Requirements(context, TextureFormat, out requiresPot, out requiresSquare);
 
                 var face = GlyphPacker.ArrangeGlyphs(glyphData.ToArray(), requiresPot, requiresSquare);
-
+                
                 // Adjust line and character spacing.
                 lineSpacing += input.Spacing;
                 output.VerticalLineSpacing = (int)lineSpacing;
@@ -104,7 +106,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
                     var texRect = glyph.Data.Subrect;
                     output.Glyphs.Add(texRect);
 
-                    var cropping = new Rectangle(0, (int)(glyph.Data.YOffset - yOffsetMin), (int)glyph.Data.XAdvance, output.VerticalLineSpacing);
+                    var cropping = new Rectangle(GetGlobalOffsetX(), (int)(glyph.Data.YOffset - yOffsetMin), (int)glyph.Data.XAdvance, output.VerticalLineSpacing);
                     output.Cropping.Add(cropping);
 
                     // Set the optional character kerning.
@@ -289,5 +291,11 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 
             return String.Empty;
         }
+
+        protected virtual void ModifyGlyphs(HashSet<GlyphData> glyphData)
+        {
+        }
+
+        protected virtual int GetGlobalOffsetX() => 0;
     }
 }

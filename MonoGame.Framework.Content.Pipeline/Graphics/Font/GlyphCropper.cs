@@ -5,7 +5,7 @@
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
 	// Crops unused space from around the edge of a glyph bitmap.
-	internal static class GlyphCropper
+	public static class GlyphCropper
 	{
 		public static void Crop(GlyphData glyph)
 		{
@@ -40,7 +40,19 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 
 				glyph.XAdvance++;
 			}
-		}
-	}
+        }
+
+        public static void Enlarge(GlyphData glyph, int amount)
+        {
+            // disabled, cause it made coordinates go below 0 which threw an exception
+            //glyph.Subrect.X -= amount;
+            //glyph.Subrect.Y -= amount;
+            glyph.Subrect.Width += amount * 2;
+            glyph.Subrect.Height += amount * 2;
+            glyph.XOffset -= amount; // not sure if this is necessary or even does anything
+            glyph.YOffset -= amount; // not sure if this is necessary or even does anything
+            glyph.XAdvance -= amount; // not sure if this is necessary or even does anything
+        }
+    }
 
 }
