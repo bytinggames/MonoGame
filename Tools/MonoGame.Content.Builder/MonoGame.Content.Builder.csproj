@@ -11,7 +11,7 @@
 	  <PackageId>bytinggames-dotnet-mgcb</PackageId>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
-    <AssemblyName>mgcb</AssemblyName>
+    <AssemblyName>mgcb-byting</AssemblyName>
     <UseAppHost>true</UseAppHost>
   </PropertyGroup>
 
