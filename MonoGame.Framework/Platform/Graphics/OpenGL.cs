@@ -153,6 +153,8 @@ namespace MonoGame.OpenGL
         DepthComponent24Oes = 0x81A6,
         Depth24Stencil8Oes = 0x88F0,
         StencilIndex8 = 0x8D48,
+
+        Rgba32f = 0x8814
     }
 
     internal enum EnableCap : int

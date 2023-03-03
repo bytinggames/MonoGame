@@ -28,7 +28,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         internal abstract Resource CreateTexture();
 
-        internal Resource GetTexture()
+        internal virtual Resource GetTexture()
         {
             if (_texture == null)
                 _texture = CreateTexture();
