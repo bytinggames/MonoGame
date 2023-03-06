@@ -2,6 +2,7 @@
 
 namespace MonoGame.Tests.Framework
 {
+#if !DIRECTX
     [TestFixture]
     internal class SdlTest
     {
@@ -36,4 +37,5 @@ namespace MonoGame.Tests.Framework
             Assert.AreEqual(version.ToString(), "2.0.5");
         }
     }
+#endif
 }
