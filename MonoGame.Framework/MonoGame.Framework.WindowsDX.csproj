@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Description>The MonoGame runtime for Windows using DirectX API's.</Description>
     <PackageTags>monogame;.net core;core;.net standard;standard;windowsdx</PackageTags>
-    <PackageId>MonoGame.Framework.WindowsDX</PackageId>
+    <PackageId>BytingGames.MonoGame.Framework.WindowsDX</PackageId>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
