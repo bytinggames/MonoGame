@@ -418,18 +418,18 @@ namespace Microsoft.Xna.Framework.Graphics
         private const int VERTRES = 10;
 #endif
 
-        public static int GetCurrentDisplayIndex()
+        public static int GetCurrentDisplayIndex(IntPtr windowHandle)
         {
-            return Sdl.Display.GetWindowDisplayIndex(SdlGameWindow.Instance.Handle);
+            return Sdl.Display.GetWindowDisplayIndex(windowHandle);
         }
         public static int GetDisplayCount()
         {
             return Sdl.Display.GetNumVideoDisplays();
         }
 
-        public static Rectangle GetCurrentDisplayBounds()
+        public static Rectangle GetCurrentDisplayBounds(IntPtr windowHandle)
         {
-            return GetDisplayBounds(GetCurrentDisplayIndex());
+            return GetDisplayBounds(GetCurrentDisplayIndex(windowHandle));
         }
 
         public static Rectangle GetDisplayBounds(int displayIndex)

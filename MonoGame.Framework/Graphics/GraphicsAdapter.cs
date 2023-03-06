@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Forms;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
@@ -175,6 +176,30 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             // We don't keep any resources, so we have
             // nothing to do... just here for XNA compatibility.
+        }
+
+
+        public static int GetCurrentDisplayIndex(IntPtr windowHandle)
+        {
+            Screen screen = Screen.FromHandle(windowHandle);
+            return Array.IndexOf(Screen.AllScreens, screen);
+        }
+
+        public static int GetDisplayCount()
+        {
+            return Adapters.Count;
+        }
+
+        public static Rectangle GetCurrentDisplayBounds(IntPtr windowHandle)
+        {
+            int index = GetCurrentDisplayIndex(windowHandle);
+            return GetDisplayBounds(index);
+        }
+
+        public static Rectangle GetDisplayBounds(int displayIndex)
+        {
+            var r = Screen.AllScreens[displayIndex].Bounds;
+            return new Rectangle(r.X, r.Y, r.Width, r.Height);
         }
     }
 }
