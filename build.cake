@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////
 
 var target = Argument("build-target", "Default");
-var version = Argument("build-version", EnvironmentVariable("BUILD_NUMBER") ?? "3.8.1.7");
+var version = Argument("build-version", EnvironmentVariable("BUILD_NUMBER") ?? "3.8.1.8");
 var repositoryUrl = Argument("repository-url", "https://github.com/bytinggames/MonoGame");
 var configuration = Argument("build-configuration", "Release");
 
@@ -325,7 +325,7 @@ Task("SanityCheck")
 Task("BuildAll")
     .IsDependentOn("BuildConsoleCheck")
     .IsDependentOn("BuildDesktopGL")
-//    .IsDependentOn("BuildWindowsDX")
+    .IsDependentOn("BuildWindowsDX")
 //    .IsDependentOn("BuildAndroid")
 //    .IsDependentOn("BuildiOS")
 //    .IsDependentOn("BuildUWP")
