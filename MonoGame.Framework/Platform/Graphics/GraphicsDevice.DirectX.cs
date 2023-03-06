@@ -1149,14 +1149,17 @@ namespace Microsoft.Xna.Framework.Graphics
 
                 // Resolve MSAA render targets
                 var renderTarget = renderTargetBinding.RenderTarget as RenderTarget2D;
-                if (renderTarget != null && renderTarget.MultiSampleCount > 1)
-                    renderTarget.ResolveSubresource();
-
-                // Generate mipmaps.
-                if (renderTargetBinding.RenderTarget.LevelCount > 1)
+                if (renderTarget == null || renderTarget.ResolveMultiSampling)
                 {
-                    lock (_d3dContext)
-                        _d3dContext.GenerateMips(renderTargetBinding.RenderTarget.GetShaderResourceView());
+                    if (renderTarget != null && renderTarget.MultiSampleCount > 1)
+                        renderTarget.ResolveSubresource();
+
+                    // Generate mipmaps.
+                    if (renderTargetBinding.RenderTarget.LevelCount > 1)
+                    {
+                        lock (_d3dContext)
+                            _d3dContext.GenerateMips(renderTargetBinding.RenderTarget.GetShaderResourceView());
+                    }
                 }
             }
         }

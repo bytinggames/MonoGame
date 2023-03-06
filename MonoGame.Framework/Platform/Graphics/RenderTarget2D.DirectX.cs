@@ -169,6 +169,15 @@ namespace Microsoft.Xna.Framework.Graphics
             return _msTexture;
         }
 
+        internal override SharpDX.Direct3D11.Resource GetTexture()
+        {
+            // if texture is resolved return it, otherwise return the multisampled texture
+            if (ResolveMultiSampling)
+                return base.GetTexture();
+            else
+                return GetMSTexture();
+        }
+
         internal virtual SharpDX.Direct3D11.Texture2D CreateMSTexture()
         {
             var desc = GetMSTexture2DDescription();
@@ -181,8 +190,11 @@ namespace Microsoft.Xna.Framework.Graphics
             var desc = base.GetTexture2DDescription();
 
             desc.BindFlags |= BindFlags.RenderTarget;
-            // the multi sampled texture can never be bound directly
-            desc.BindFlags &= ~BindFlags.ShaderResource;
+            if (ResolveMultiSampling)
+            {
+                // the multi sampled texture can not be bound directly if it is resolved
+                desc.BindFlags &= ~BindFlags.ShaderResource;
+            }
             desc.SampleDescription = _msSampleDescription;
             // mip mapping is applied to the resolved texture, not the multisampled texture
             desc.MipLevels = 1;
