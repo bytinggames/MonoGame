@@ -21,7 +21,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Currently only supported on DirectX. If this is set to false, there will be no mipmaps generated currently.
         /// </summary>
-        public bool ResolveMultiSampling { get; }
+        public bool ResolveMultiSampling { get; private set; }
 
         private bool SuppressEventHandlerWarningsUntilEventsAreProperlyImplemented()
         {
