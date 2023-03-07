@@ -32,11 +32,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private SharpDX.Direct3D11.Texture2D _cachedStagingTexture;
 
-        private void PlatformConstruct(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared)
+        private void PlatformConstruct(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int sampleCount = 1)
         {
             _shared = shared;
             _mipmap = mipmap;
-            _sampleDescription = new SampleDescription(1, 0);
+            _sampleDescription = new SampleDescription(sampleCount == 0 ? 1 : sampleCount, 0);
         }
 
         private void PlatformSetData<T>(int level, T[] data, int startIndex, int elementCount) where T : struct
