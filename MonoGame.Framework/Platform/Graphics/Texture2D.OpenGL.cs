@@ -28,9 +28,9 @@ namespace Microsoft.Xna.Framework.Graphics
 {
     public partial class Texture2D : Texture
     {
-        private void PlatformConstruct(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared)
+        private void PlatformConstruct(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int sampleCount = 0)
         {
-            this.glTarget = TextureTarget.Texture2D;
+            this.glTarget = sampleCount > 1 ? TextureTarget.Texture2DMultisample : TextureTarget.Texture2D;
 
             bool isWriteable = ShaderAccess == ShaderAccess.ReadWrite;
             format.GetGLFormat(GraphicsDevice, isWriteable, out glInternalFormat, out glFormat, out glType);
@@ -70,7 +70,10 @@ namespace Microsoft.Xna.Framework.Graphics
                     }
                     else
                     {
-                        GL.TexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, glFormat, glType, IntPtr.Zero);
+                        if (sampleCount > 1)
+                            GL.TexImage2DMultisample(TextureTarget.Texture2DMultisample, sampleCount, glInternalFormat, w, h, false /* TODO: don't know what to use here. The user sould probably decide */);
+                        else
+                            GL.TexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, glFormat, glType, IntPtr.Zero);
                         GraphicsExtensions.CheckGLError();
                     }
 
@@ -442,7 +445,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (((width & (width - 1)) != 0) || ((height & (height - 1)) != 0))
                     wrap = TextureWrapMode.ClampToEdge;
 
-                GL.BindTexture(TextureTarget.Texture2D, this.glTexture);
+                GL.BindTexture(glTarget, this.glTexture);
                 GraphicsExtensions.CheckGLError();
 
                 GL.TexParameter(

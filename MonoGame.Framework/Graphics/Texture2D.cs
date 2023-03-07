@@ -111,7 +111,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
         }
 
-        protected Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int arraySize, ShaderAccess shaderAccess) :
+        protected Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int arraySize, ShaderAccess shaderAccess, int sampleCount = 0) :
             base(shaderAccess)
 		{
             if (graphicsDevice == null)
@@ -137,7 +137,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		    if (type == SurfaceType.SwapChainRenderTarget)
 		        return;
 
-            PlatformConstruct(width, height, mipmap, format, type, shared);
+            PlatformConstruct(width, height, mipmap, format, type, shared, sampleCount);
         }
 
         /// <summary>

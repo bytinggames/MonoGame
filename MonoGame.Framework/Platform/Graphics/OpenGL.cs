@@ -159,6 +159,7 @@ namespace MonoGame.OpenGL
     internal enum RenderbufferStorage
     {
         Rgba8 = 0x8058,
+        Rgba32f = 0x8814,
         DepthComponent16 = 0x81a5,
         DepthComponent24 = 0x81a6,
         Depth24Stencil8 = 0x88F0,
@@ -411,6 +412,7 @@ namespace MonoGame.OpenGL
     internal enum TextureTarget
     {
         Texture2D = 0x0DE1,
+        Texture2DMultisample = 0x9100,
         Texture3D = 0x806F,
         TextureCubeMap = 0x8513,
         TextureCubeMapPositiveX = 0x8515,
@@ -1322,6 +1324,13 @@ namespace MonoGame.OpenGL
         [System.Security.SuppressUnmanagedCodeSecurity()]
         [UnmanagedFunctionPointer(callingConvention)]
         [MonoNativeFunctionWrapper]
+        internal delegate void TexImage2DMultisampleDelegate(TextureTarget target, int sampleCount, PixelInternalFormat internalFormat,
+            int width, int height, bool fixedSampleLocations);
+        internal static TexImage2DMultisampleDelegate TexImage2DMultisample;
+
+        [System.Security.SuppressUnmanagedCodeSecurity()]
+        [UnmanagedFunctionPointer(callingConvention)]
+        [MonoNativeFunctionWrapper]
         internal delegate void CompressedTexSubImage2DDelegate(TextureTarget target, int level,
             int x, int y, int width, int height, PixelInternalFormat format, int size, IntPtr data);
         internal static CompressedTexSubImage2DDelegate CompressedTexSubImage2D;
@@ -1616,6 +1625,7 @@ namespace MonoGame.OpenGL
 
             CompressedTexImage2D = LoadFunction<CompressedTexImage2DDelegate> ("glCompressedTexImage2D");
             TexImage2D = LoadFunction<TexImage2DDelegate> ("glTexImage2D");
+            TexImage2DMultisample = LoadFunction<TexImage2DMultisampleDelegate>("glTexImage2DMultisample");
             CompressedTexSubImage2D = LoadFunction<CompressedTexSubImage2DDelegate> ("glCompressedTexSubImage2D");
             TexSubImage2D = LoadFunction<TexSubImage2DDelegate> ("glTexSubImage2D");
             PixelStore = LoadFunction<PixelStoreDelegate> ("glPixelStorei");

@@ -654,7 +654,12 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 this.framebufferHelper.GenRenderbuffer(out color);
                 this.framebufferHelper.BindRenderbuffer(color);
-                this.framebufferHelper.RenderbufferStorageMultisample(preferredMultiSampleCount, (int)RenderbufferStorage.Rgba8, width, height);
+                RenderbufferStorage storage = preferredFormat switch
+                {
+                    SurfaceFormat.Vector4 => RenderbufferStorage.Rgba32f,
+                    _ => RenderbufferStorage.Rgba8,
+                };
+                this.framebufferHelper.RenderbufferStorageMultisample(preferredMultiSampleCount, (int)storage, width, height);
             }
 
             if (preferredDepthFormat != DepthFormat.None)

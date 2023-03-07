@@ -25,7 +25,9 @@ namespace Microsoft.Xna.Framework.Graphics
                 GraphicsDevice = device;
             }
             Debug.Assert(GraphicsDevice == device, "The state was created for a different device!");
-
+            
+            if (target != TextureTarget.Texture2DMultisample) // multisampling textures don't support a samplerstate
+            {
             switch (Filter)
       {
       case TextureFilter.Point:
@@ -164,6 +166,7 @@ namespace Microsoft.Xna.Framework.Graphics
                     throw new InvalidOperationException("Invalid filter mode!");
             }
 #endif
+            }
             if (GraphicsDevice.GraphicsCapabilities.SupportsTextureMaxLevel)
             {
                 if (this.MaxMipLevel > 0)
