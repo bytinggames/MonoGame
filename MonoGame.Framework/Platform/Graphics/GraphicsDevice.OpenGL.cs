@@ -661,7 +661,6 @@ namespace Microsoft.Xna.Framework.Graphics
                     SurfaceFormat.HalfSingle => RenderbufferStorage.R16f,
                     SurfaceFormat.Color => RenderbufferStorage.Rgba8,
                     _ => throw new NotImplementedException()
-                    //_ => RenderbufferStorage.Rgba8,
                 };
                 this.framebufferHelper.RenderbufferStorageMultisample(preferredMultiSampleCount, (int)storage, width, height);
             }
