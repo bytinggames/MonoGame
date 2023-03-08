@@ -657,7 +657,11 @@ namespace Microsoft.Xna.Framework.Graphics
                 RenderbufferStorage storage = preferredFormat switch
                 {
                     SurfaceFormat.Vector4 => RenderbufferStorage.Rgba32f,
-                    _ => RenderbufferStorage.Rgba8,
+                    SurfaceFormat.Single => RenderbufferStorage.R32f,
+                    SurfaceFormat.HalfSingle => RenderbufferStorage.R16f,
+                    SurfaceFormat.Color => RenderbufferStorage.Rgba8,
+                    _ => throw new NotImplementedException()
+                    //_ => RenderbufferStorage.Rgba8,
                 };
                 this.framebufferHelper.RenderbufferStorageMultisample(preferredMultiSampleCount, (int)storage, width, height);
             }

@@ -160,6 +160,8 @@ namespace MonoGame.OpenGL
     {
         Rgba8 = 0x8058,
         Rgba32f = 0x8814,
+        R32f = 0x822E,
+        R16f = 0x822D,
         DepthComponent16 = 0x81a5,
         DepthComponent24 = 0x81a6,
         Depth24Stencil8 = 0x88F0,
