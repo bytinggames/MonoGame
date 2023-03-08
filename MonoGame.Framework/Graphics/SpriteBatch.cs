@@ -113,7 +113,10 @@ namespace Microsoft.Xna.Framework.Graphics
             if (_effect != effect)
             {
                 _effect = effect;
-                _customEffectTransformParameter = effect.Parameters[MatrixTransformStr];
+                if (effect == null)
+                    _customEffectTransformParameter = null;
+                else
+                    _customEffectTransformParameter = effect.Parameters[MatrixTransformStr];
             }
             _spriteEffect.TransformMatrix = transformMatrix;
 
