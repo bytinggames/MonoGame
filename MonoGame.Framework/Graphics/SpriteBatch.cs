@@ -26,8 +26,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
 		SpriteEffect _spriteEffect;
         readonly EffectPass _spritePass;
+        readonly EffectParameter _spriteEffectTransformParameter;
+        EffectParameter _customEffectTransformParameter;
+        private const string MatrixTransformStr = "MatrixTransform";
 
-		Rectangle _tempRect = new Rectangle (0,0,0,0);
+        Rectangle _tempRect = new Rectangle (0,0,0,0);
 		Vector2 _texCoordTL = new Vector2 (0,0);
 		Vector2 _texCoordBR = new Vector2 (0,0);
         #endregion
@@ -65,6 +68,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             _spriteEffect = new SpriteEffect(graphicsDevice);
             _spritePass = _spriteEffect.CurrentTechnique.Passes[0];
+            _spriteEffectTransformParameter = _spriteEffect.Parameters["MatrixTransform"];
 
             _batcher = new SpriteBatcher(graphicsDevice, capacity);
 
@@ -81,7 +85,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="samplerState">State of the sampler. Uses <see cref="SamplerState.LinearClamp"/> if null.</param>
         /// <param name="depthStencilState">State of the depth-stencil buffer. Uses <see cref="DepthStencilState.None"/> if null.</param>
         /// <param name="rasterizerState">State of the rasterization. Uses <see cref="RasterizerState.CullCounterClockwise"/> if null.</param>
-        /// <param name="effect">A custom <see cref="Effect"/> to override the default sprite effect. Uses default sprite effect if null.</param>
+        /// <param name="effect">A custom <see cref="Effect"/> to override the default sprite effect. Uses default sprite effect if null. Implement float4x4 MatrixTransform in the shader, so that the SpriteBatch transform matrix is automatically applied to that custom shader.</param>
         /// <param name="transformMatrix">An optional matrix used to transform the sprite geometry. Uses <see cref="Matrix.Identity"/> if null.</param>
         /// <exception cref="InvalidOperationException">Thrown if <see cref="Begin"/> is called next time without previous <see cref="End"/>.</exception>
         /// <remarks>This method uses optional parameters.</remarks>
@@ -106,7 +110,11 @@ namespace Microsoft.Xna.Framework.Graphics
             _samplerState = samplerState ?? SamplerState.LinearClamp;
             _depthStencilState = depthStencilState ?? DepthStencilState.None;
             _rasterizerState = rasterizerState ?? RasterizerState.CullCounterClockwise;
-            _effect = effect;
+            if (_effect != effect)
+            {
+                _effect = effect;
+                _customEffectTransformParameter = effect.Parameters[MatrixTransformStr];
+            }
             _spriteEffect.TransformMatrix = transformMatrix;
 
             // Setup things now so a user can change them.
@@ -146,6 +154,11 @@ namespace Microsoft.Xna.Framework.Graphics
 			gd.SamplerStates[0] = _samplerState;
 
             _spritePass.Apply();
+            if (_effect != null && _customEffectTransformParameter != null)
+            {
+                Matrix m = _spriteEffectTransformParameter.GetValueMatrix();
+                _customEffectTransformParameter.SetValue(m);
+            }
 		}
 		
         void CheckValid(Texture2D texture)
