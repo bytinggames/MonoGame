@@ -1250,6 +1250,12 @@ namespace MonoGame.OpenGL
         [System.Security.SuppressUnmanagedCodeSecurity()]
         [UnmanagedFunctionPointer(callingConvention)]
         [MonoNativeFunctionWrapper]
+        internal delegate void BlendEquationSeparateiARBDelegate(int buffer, BlendEquationMode colorMode, BlendEquationMode alphaMode);
+        internal static BlendEquationSeparateiARBDelegate BlendEquationSeparateiARB;
+
+        [System.Security.SuppressUnmanagedCodeSecurity()]
+        [UnmanagedFunctionPointer(callingConvention)]
+        [MonoNativeFunctionWrapper]
         internal delegate void BlendFuncSeparateDelegate(BlendingFactorSrc colorSrc, BlendingFactorDest colorDst,
             BlendingFactorSrc alphaSrc, BlendingFactorDest alphaDst);
         internal static BlendFuncSeparateDelegate BlendFuncSeparate;
@@ -1260,6 +1266,13 @@ namespace MonoGame.OpenGL
         internal delegate void BlendFuncSeparateiDelegate(int buffer, BlendingFactorSrc colorSrc, BlendingFactorDest colorDst,
             BlendingFactorSrc alphaSrc, BlendingFactorDest alphaDst);
         internal static BlendFuncSeparateiDelegate BlendFuncSeparatei;
+
+        [System.Security.SuppressUnmanagedCodeSecurity()]
+        [UnmanagedFunctionPointer(callingConvention)]
+        [MonoNativeFunctionWrapper]
+        internal delegate void BlendFuncSeparateiARBDelegate(int buffer, BlendingFactorSrc colorSrc, BlendingFactorDest colorDst,
+            BlendingFactorSrc alphaSrc, BlendingFactorDest alphaDst);
+        internal static BlendFuncSeparateiARBDelegate BlendFuncSeparateiARB;
 
         [System.Security.SuppressUnmanagedCodeSecurity()]
         [UnmanagedFunctionPointer(callingConvention)]
@@ -1736,9 +1749,8 @@ namespace MonoGame.OpenGL
                     GL.BlitFramebuffer = LoadFunction<GL.BlitFramebufferDelegate>("glBlitFramebufferNV");
                 }
             }
-
-            GL.BlendFuncSeparatei = LoadFunction<GL.BlendFuncSeparateiDelegate>("BlendFuncSeparateiARB");
-            GL.BlendEquationSeparatei = LoadFunction<GL.BlendEquationSeparateiDelegate>("BlendEquationSeparateiARB");
+            GL.BlendFuncSeparateiARB = LoadFunction<GL.BlendFuncSeparateiARBDelegate>("BlendFuncSeparateiARB");
+            GL.BlendEquationSeparateiARB = LoadFunction<GL.BlendEquationSeparateiARBDelegate>("BlendEquationSeparateiARB");
             GL.GetUniformBlockIndex = LoadFunction<GL.GetUniformBlockIndexDelegate>("glGetUniformBlockIndex");
             GL.UniformBlockBinding = LoadFunction<GL.UniformBlockBindingDelegate>("glUniformBlockBinding");
             GL.GetProgramResourceIndex = LoadFunction<GL.GetProgramResourceIndexDelegate>("glGetProgramResourceIndex");
