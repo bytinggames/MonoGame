@@ -280,10 +280,17 @@ namespace Microsoft.Xna.Framework.Graphics
             if (ParameterClass != EffectParameterClass.Matrix || ParameterType != EffectParameterType.Single)
                 throw new InvalidCastException();
 
+            var floatData = (float[])Data;
+
+            if (RowCount == 3 && ColumnCount == 3)
+                return new Matrix(floatData[0], floatData[3], floatData[6], 0,
+                                  floatData[1], floatData[4], floatData[7], 0,
+                                  floatData[2], floatData[5], floatData[8], 0,
+                                  0, 0, 0, 1);
+
             if (RowCount != 4 || ColumnCount != 4)
                 throw new InvalidCastException();
 
-            var floatData = (float[])Data;
 
             return new Matrix(floatData[0], floatData[4], floatData[8], floatData[12],
                               floatData[1], floatData[5], floatData[9], floatData[13],
