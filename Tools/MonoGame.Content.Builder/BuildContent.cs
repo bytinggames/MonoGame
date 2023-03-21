@@ -185,10 +185,13 @@ namespace MonoGame.Content.Builder
 
             sourceFile = PathHelper.Normalize(sourceFile);
 
-            // Remove duplicates... keep this new one.
-            var previous = _content.FindIndex(e => string.Equals(e.SourceFile, sourceFile, StringComparison.InvariantCultureIgnoreCase));
-            if (previous != -1)
-                _content.RemoveAt(previous);
+            if (!KeepDuplicates)
+            {
+                // Remove duplicates... keep this new one.
+                var previous = _content.FindIndex(e => string.Equals(e.SourceFile, sourceFile, StringComparison.InvariantCultureIgnoreCase));
+                if (previous != -1)
+                    _content.RemoveAt(previous);
+            }
 
             // Create the item for processing later.
             var item = new ContentItem
@@ -241,6 +244,11 @@ namespace MonoGame.Content.Builder
             Name = "compress",
             Description = "Compress the XNB files for smaller file sizes.")]
         public bool CompressContent = false;
+
+        [CommandLineParameter(
+            Name = "keepDuplicates",
+            Description = "Wether duplicate source files should be built again.")]
+        public bool KeepDuplicates = false;
 
         public class ContentItem
         {
