@@ -321,6 +321,12 @@ namespace MonoGame.Tests.ContentPipeline
             }
         }
 
+        [Test]
+        public void ImportExr()
+        {
+            ImportStandard("Assets/Textures/exr-test_256px.exr", SurfaceFormat.Vector4, 256);
+        }
+
         private static void AssertFloatsAreEqual(float expected, float actual)
         {
             // Assume floats are equal if they differ less than 1%

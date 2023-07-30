@@ -144,6 +144,9 @@
     <Content Update="..\..\Tests\Assets\Textures\color_64bit.png">
       <Link>Assets\Textures\color_64bit.png</Link>
     </Content>
+	<Content Update="..\..\Tests\Assets\Textures\exr-test_256px.exr">
+	  <Link>Assets\Textures\exr-test_256px.exr</Link>
+	</Content>
     <Content Update="..\..\Tests\Assets\Textures\SampleCube64DXT1Mips.xnb">
       <Link>Assets\Textures\SampleCube64DXT1Mips.xnb</Link>
     </Content>
