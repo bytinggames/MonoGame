@@ -12,6 +12,7 @@ using Windows.ApplicationModel.Activation;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 
 
@@ -248,14 +249,14 @@ namespace Microsoft.Xna.Framework
                 {
                     if (Window.RelativeRawMouse)
                     {
-                        Sdl.Mouse.SetRelativeMouseMode(false);
+                        Mouse.SetRelativeMouseMode(false);
                     }
                 }
                 else
                 {
                     if (Window.RelativeRawMouse)
                     {
-                        Sdl.Mouse.SetRelativeMouseMode(true);
+                        Mouse.SetRelativeMouseMode(true);
                     }
                 }
             }

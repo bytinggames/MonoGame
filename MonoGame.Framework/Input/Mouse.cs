@@ -66,5 +66,10 @@ namespace Microsoft.Xna.Framework.Input
         {
             PlatformSetCursor(cursor);
         }
+
+        public static void SetRelativeMouseMode(bool rawRelativeMouse)
+        {
+            PlatformSetRelativeMouseMode(rawRelativeMouse);
+        }
     }
 }

@@ -104,7 +104,10 @@ namespace Microsoft.Xna.Framework
         private bool realtiveRawMouse;
         public bool RelativeRawMouse
         {
-            get => realtiveRawMouse;
+            get
+            {
+                return realtiveRawMouse;
+            }
             set
             {
                 if (realtiveRawMouse != value)
@@ -114,7 +117,7 @@ namespace Microsoft.Xna.Framework
                     if (!Game.Instance.IsMouseVisible
                         || !value)
                     {
-                        Sdl.Mouse.SetRelativeMouseMode(value);
+                        Mouse.SetRelativeMouseMode(value);
                     }
                 }
             }
