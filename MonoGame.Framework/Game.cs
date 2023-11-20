@@ -240,7 +240,25 @@ namespace Microsoft.Xna.Framework
         public bool IsMouseVisible
         {
             get { return Platform.IsMouseVisible; }
-            set { Platform.IsMouseVisible = value; }
+            set
+            {
+                Platform.IsMouseVisible = value;
+
+                if (value)
+                {
+                    if (Window.RelativeRawMouse)
+                    {
+                        Sdl.Mouse.SetRelativeMouseMode(false);
+                    }
+                }
+                else
+                {
+                    if (Window.RelativeRawMouse)
+                    {
+                        Sdl.Mouse.SetRelativeMouseMode(true);
+                    }
+                }
+            }
         }
 
         /// <summary>

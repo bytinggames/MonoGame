@@ -29,7 +29,7 @@ namespace Microsoft.Xna.Framework.Input
             var state = Sdl.Mouse.GetGlobalState(out globalX, out globalY);
             var clientBounds = window.ClientBounds;
 
-            if (window.RelativeRawMouse)
+            if (window.RelativeRawMouse && !Game.Instance.IsMouseVisible)
             {
                 Sdl.Mouse.GetRelativeMouseState(out int x, out int y);
                 X += x;

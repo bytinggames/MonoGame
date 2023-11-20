@@ -110,7 +110,12 @@ namespace Microsoft.Xna.Framework
                 if (realtiveRawMouse != value)
                 {
                     realtiveRawMouse = value;
-                    Sdl.Mouse.SetRelativeMouseMode(value);
+
+                    if (!Game.Instance.IsMouseVisible
+                        || !value)
+                    {
+                        Sdl.Mouse.SetRelativeMouseMode(value);
+                    }
                 }
             }
         }
