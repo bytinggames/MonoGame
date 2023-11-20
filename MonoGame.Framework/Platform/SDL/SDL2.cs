@@ -737,6 +737,10 @@ internal static class Sdl
         public static d_sdl_getmousestate GetState = FuncLoader.LoadFunction<d_sdl_getmousestate>(NativeLibrary, "SDL_GetMouseState");
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate Button d_sdl_getrelativemousestate(out int x, out int y);
+        public static d_sdl_getrelativemousestate GetRelativeMouseState = FuncLoader.LoadFunction<d_sdl_getrelativemousestate>(NativeLibrary, "SDL_GetRelativeMouseState");
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void d_sdl_setcursor(IntPtr cursor);
         public static d_sdl_setcursor SetCursor = FuncLoader.LoadFunction<d_sdl_setcursor>(NativeLibrary, "SDL_SetCursor");
 
@@ -747,6 +751,11 @@ internal static class Sdl
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void d_sdl_warpmouseinwindow(IntPtr window, int x, int y);
         public static d_sdl_warpmouseinwindow WarpInWindow = FuncLoader.LoadFunction<d_sdl_warpmouseinwindow>(NativeLibrary, "SDL_WarpMouseInWindow");
+
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int d_sdl_setrelativemousemode(bool value);
+        public static d_sdl_setrelativemousemode SetRelativeMouseMode = FuncLoader.LoadFunction<d_sdl_setrelativemousemode>(NativeLibrary, "SDL_SetRelativeMouseMode");
     }
 
     public static class Keyboard

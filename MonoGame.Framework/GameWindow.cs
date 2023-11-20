@@ -100,9 +100,24 @@ namespace Microsoft.Xna.Framework
         internal MouseState MouseState;
 	    internal TouchPanelState TouchPanelState;
 
-	    /// <summary>
-	    /// Create a <see cref="GameWindow"/>.
-	    /// </summary>
+
+        private bool realtiveRawMouse;
+        public bool RelativeRawMouse
+        {
+            get => realtiveRawMouse;
+            set
+            {
+                if (realtiveRawMouse != value)
+                {
+                    realtiveRawMouse = value;
+                    Sdl.Mouse.SetRelativeMouseMode(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create a <see cref="GameWindow"/>.
+        /// </summary>
         protected GameWindow()
         {
             TouchPanelState = new TouchPanelState(this);

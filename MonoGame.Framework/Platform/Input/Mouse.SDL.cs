@@ -20,12 +20,26 @@ namespace Microsoft.Xna.Framework.Input
         {
         }
 
+        static int X, Y; // used for accumulating relative mouse positions
+
         private static MouseState PlatformGetState(GameWindow window)
         {
-            int x, y;
+            int globalX, globalY;
             var winFlags = Sdl.Window.GetWindowFlags(window.Handle);
-            var state = Sdl.Mouse.GetGlobalState(out x, out y);
+            var state = Sdl.Mouse.GetGlobalState(out globalX, out globalY);
             var clientBounds = window.ClientBounds;
+
+            if (window.RelativeRawMouse)
+            {
+                Sdl.Mouse.GetRelativeMouseState(out int x, out int y);
+                X += x;
+                Y += y;
+            }
+            else
+            {
+                X = globalX - clientBounds.X;
+                Y = globalY - clientBounds.Y;
+            }
 
             window.MouseState.LeftButton = (state & Sdl.Mouse.Button.Left) != 0 ? ButtonState.Pressed : ButtonState.Released;
             window.MouseState.MiddleButton = (state & Sdl.Mouse.Button.Middle) != 0 ? ButtonState.Pressed : ButtonState.Released;
@@ -36,8 +50,8 @@ namespace Microsoft.Xna.Framework.Input
             window.MouseState.HorizontalScrollWheelValue = ScrollX;
             window.MouseState.ScrollWheelValue = ScrollY;
 
-            window.MouseState.X = x - clientBounds.X;
-            window.MouseState.Y = y - clientBounds.Y;
+            window.MouseState.X = X;
+            window.MouseState.Y = Y;
 
             return window.MouseState;
         }
@@ -46,7 +60,7 @@ namespace Microsoft.Xna.Framework.Input
         {
             PrimaryWindow.MouseState.X = x;
             PrimaryWindow.MouseState.Y = y;
-            
+
             Sdl.Mouse.WarpInWindow(PrimaryWindow.Handle, x, y);
         }
 
