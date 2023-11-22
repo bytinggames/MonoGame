@@ -30,9 +30,28 @@ namespace Microsoft.Xna.Framework.Content
 
             if (ReflectionHelpers.IsValueType(typeof(T)))
 			{
-                for (uint i = 0; i < count; i++)
+                // if the array is a byte array, read it directly as that. This is way faster.
+                if (array is byte[] bytes)
                 {
-                	array[i] = input.ReadObject<T>(elementReader);
+                    int numRead = 0;
+                    do
+                    {
+                        int n = input.Read(bytes, numRead, (int)Math.Min(int.MaxValue, count));
+                        if (n == 0)
+                        {
+                            break;
+                        }
+
+                        numRead += n;
+                        count -= (uint)n;
+                    } while (count > 0);
+                }
+                else
+                {
+                    for (uint i = 0; i < count; i++)
+                    {
+                        array[i] = input.ReadObject<T>(elementReader);
+                    }
                 }
 			}
 			else
