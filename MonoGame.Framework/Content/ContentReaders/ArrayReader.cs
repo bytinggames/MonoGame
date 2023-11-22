@@ -31,7 +31,8 @@ namespace Microsoft.Xna.Framework.Content
             if (ReflectionHelpers.IsValueType(typeof(T)))
 			{
                 // if the array is a byte array, read it directly as that. This is way faster.
-                if (array is byte[] bytes)
+                byte[] bytes = array as byte[];
+                if (bytes != null)
                 {
                     int numRead = 0;
                     do
