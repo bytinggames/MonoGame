@@ -23,6 +23,8 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 
         public virtual TextureProcessorOutputFormat TextureFormat { get; set; }
 
+        public char? DefaultCharacter { get; set; }
+
         public FontTextureProcessor()
         {
             FirstCharacter = ' ';
@@ -158,6 +160,8 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 
             // Perform the final texture conversion.
             texProfile.ConvertTexture(context, output.Texture, TextureFormat, true);
+
+            output.DefaultCharacter = DefaultCharacter;
 
             return output;
         }

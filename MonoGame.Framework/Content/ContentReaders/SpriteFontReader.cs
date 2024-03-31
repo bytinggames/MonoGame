@@ -52,6 +52,10 @@ namespace Microsoft.Xna.Framework.Content
                 {
                     defaultCharacter = new char?(input.ReadChar());
                 }
+                else if (charMap.Contains('?'))
+                {
+                    defaultCharacter = '?'; // more sane as null per default, as this doesn't cause an exception when measuring or drawing text with this font
+                }
                 return new SpriteFont(texture, glyphs, cropping, charMap, lineSpacing, spacing, kerning, defaultCharacter);
             }
         }
