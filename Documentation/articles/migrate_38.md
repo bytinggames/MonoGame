@@ -13,7 +13,7 @@ Upgrading from 3.8.0 should be as straightforward as upgrading your ```TargetFra
 Edit your csproj file to change your ```TargetFramework```:
 
 ```xml
-<TargetFramework>net6.0</TargetFramework>
+<TargetFramework>net8.0</TargetFramework>
 ```
 
 Then edit your MonoGame ```PackageReference``` to point to 3.8.1:
