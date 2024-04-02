@@ -49,6 +49,10 @@ namespace Microsoft.Xna.Framework
                 Sdl.GL.SetAttribute(Sdl.GL.Attribute.MultiSampleSamples, presentationParameters.MultiSampleCount);
             }
 
+            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextProfileMask, (int)ContextSettings.ProfileMask);
+            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextMajorVersion, ContextSettings.MajorVersion);
+            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextMinorVersion, ContextSettings.MinorVersion);
+
             ((SdlGameWindow)SdlGameWindow.Instance).CreateWindow();
         }
     }

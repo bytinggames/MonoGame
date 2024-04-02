@@ -30,6 +30,7 @@ namespace Microsoft.Xna.Framework
         private bool _preferHalfPixelOffset = false;
         private bool _wantFullScreen;
         private GraphicsProfile _graphicsProfile;
+        private GraphicsContextSettings _contextSettings = new GraphicsContextSettings();
         // dirty flag for ApplyChanges
         private bool _shouldApplyChanges;
 
@@ -376,10 +377,6 @@ namespace Microsoft.Xna.Framework
             // Allow for any per-platform changes to the presentation.
             PlatformInitialize(gdi.PresentationParameters);
 
-            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextProfileMask, (int)ContextSettings.ProfileMask);
-            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextMajorVersion, ContextSettings.MajorVersion);
-            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextMinorVersion, ContextSettings.MinorVersion);
-
             _initialized = true;
         }
 
@@ -635,6 +632,16 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        public GraphicsContextSettings ContextSettings { get; set; } = new();
+        public GraphicsContextSettings ContextSettings
+        {
+            get
+            {
+                return _contextSettings;
+            }
+            set
+            {
+                _contextSettings = value;
+            }
+        }
     }
 }
