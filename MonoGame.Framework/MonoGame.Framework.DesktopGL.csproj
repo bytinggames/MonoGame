@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -42,6 +42,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Platform\Graphics\ContextProfileMask.cs" />
+    <Compile Include="Platform\Graphics\GraphicsContextSettings.cs" />
     <Compile Include="Platform\TitleContainer.Desktop.cs" />
     <Compile Include="Platform\Audio\OggStream.cs" />
     <Compile Include="Platform\Audio\Xact\WaveBank.Default.cs" />

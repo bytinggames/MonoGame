@@ -376,6 +376,10 @@ namespace Microsoft.Xna.Framework
             // Allow for any per-platform changes to the presentation.
             PlatformInitialize(gdi.PresentationParameters);
 
+            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextProfileMask, (int)ContextSettings.ProfileMask);
+            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextMajorVersion, ContextSettings.MajorVersion);
+            Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextMinorVersion, ContextSettings.MinorVersion);
+
             _initialized = true;
         }
 
@@ -630,5 +634,7 @@ namespace Microsoft.Xna.Framework
                 _supportedOrientations = value;
             }
         }
+
+        public GraphicsContextSettings ContextSettings { get; set; } = new();
     }
 }

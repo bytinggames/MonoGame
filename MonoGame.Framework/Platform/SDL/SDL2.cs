@@ -591,7 +591,7 @@ internal static class Sdl
             ContextMinorVersion,
             ContextEgl,
             ContextFlags,
-            ContextProfileMAsl,
+            ContextProfileMask,
             ShareWithCurrentContext,
             FramebufferSRGBCapable,
             ContextReleaseBehaviour,
@@ -638,6 +638,15 @@ internal static class Sdl
         public static int SetAttribute(Attribute attr, int value)
         {
             return GetError(SDL_GL_SetAttribute(attr, value));
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int d_sdl_gl_getattribute(Attribute attr, out int value);
+        private static d_sdl_gl_getattribute SDL_GL_GetAttribute = FuncLoader.LoadFunction<d_sdl_gl_getattribute>(NativeLibrary, "SDL_GL_GetAttribute");
+
+        public static int GetAttribute(Attribute attr, out int value)
+        {
+            return GetError(SDL_GL_GetAttribute(attr, out value));
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
