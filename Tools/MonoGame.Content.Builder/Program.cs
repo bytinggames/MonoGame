@@ -20,11 +20,12 @@ namespace MonoGame.Content.Builder
                 string additionalArgs = "/define:Debug /define:Configuration=Debug /define:RuntimeIdentifier= /define:ConfigRuntime=Debug_ /@:C:\\Projects\\SE\\SE\\Content\\Content.Generated.mgcb";
 
                 args = [
-    "/rebuildOnVersionUpdate:true",
-"/platform:DesktopGL",
-@"/outputDir:C:/Projects/SE/SE/Content/bin/DesktopGL/Content.Generated",
-@"/intermediateDir:C:/Projects/SE/SE/Content/obj/DesktopGL/net8.0/Content.Generated",
-@"/workingDir:C:/Projects/SE/SE/Content/",
+                    //"/rebuildOnVersionUpdate:true",
+                    "/parallelCores:4",
+                    "/platform:DesktopGL",
+                    @"/outputDir:C:/Projects/SE/SE/Content/bin/DesktopGL/Content.Generated",
+                    @"/intermediateDir:C:/Projects/SE/SE/Content/obj/DesktopGL/net8.0/Content.Generated",
+                    @"/workingDir:C:/Projects/SE/SE/Content/",
                 ];
 
                 args = additionalArgs.Split([' ']).Concat(args).ToArray();

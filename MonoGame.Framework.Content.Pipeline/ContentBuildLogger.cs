@@ -3,6 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
@@ -14,7 +15,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
     /// </summary>
     public abstract class ContentBuildLogger
     {
-        Stack<string> filenames = new Stack<string>();
+        ConcurrentStack<string> filenames = new ConcurrentStack<string>();
         private int indentCount = 0;
 
         protected string IndentString { get { return String.Empty.PadLeft(Math.Max(0, indentCount), '\t'); } }
@@ -57,8 +58,10 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         {
             if ((contentIdentity != null) && !string.IsNullOrEmpty(contentIdentity.SourceFilename))
                 return GetRelativePath(contentIdentity.SourceFilename, LoggerRootDirectory);
-            if (filenames.Count > 0)
-                return GetRelativePath(filenames.Peek(), LoggerRootDirectory);
+            if (filenames.TryPeek(out string filename))
+            {
+                return GetRelativePath(filename, LoggerRootDirectory);
+            }
             return null;
         }
 
@@ -101,7 +104,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         /// </summary>
         public void PopFile()
         {
-            filenames.Pop();
+            filenames.TryPop(out _);
         }
 
         /// <summary>

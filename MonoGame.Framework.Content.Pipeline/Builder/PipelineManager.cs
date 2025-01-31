@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Globalization;
 using Microsoft.Xna.Framework.Content.Pipeline.Builder.Convertors;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace MonoGame.Framework.Content.Pipeline.Builder
 {
@@ -54,7 +55,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         // parameters. See PipelineBuildEvent.AreParametersEqual.)
         //   Key = name of content processor
         //   Value = processor parameters
-        private readonly Dictionary<string, OpaqueDataDictionary> _processorDefaultValues;
+        private readonly ConcurrentDictionary<string, OpaqueDataDictionary> _processorDefaultValues;
 
         public string ProjectDirectory { get; private set; }
         public string OutputDirectory { get; private set; }
@@ -102,10 +103,17 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </summary>
         public bool RebuildOnlyIfDependencyVersionUpdated { get; set; }
 
+        /// <summary>
+        /// Sets max allowed cpu cores to parallelize building content.
+        /// If set to 1, it doesn't run in parallel.
+        /// If set to smaller than 1, it uses the given fraction of the available cpu cores. Example: available cpu cores: 8, MaxParallelCores: 0.5 -> used cores: 4
+        /// </summary>
+        public float MaxParallelCores { get; set; } = 1f;
+
         public PipelineManager(string projectDir, string outputDir, string intermediateDir)
         {
             _pipelineBuildEvents = new Dictionary<string, List<PipelineBuildEvent>>();
-            _processorDefaultValues = new Dictionary<string, OpaqueDataDictionary>();
+            _processorDefaultValues = new ConcurrentDictionary<string, OpaqueDataDictionary>();
             RethrowExceptions = true;
 
             Assemblies = new List<string>();
@@ -455,7 +463,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                     }
                 }
 
-                _processorDefaultValues.Add(processorName, defaultValues);
+                _processorDefaultValues.TryAdd(processorName, defaultValues);
             }
 
             return defaultValues;

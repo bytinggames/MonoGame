@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.Content.Pipeline.Builder;
@@ -84,6 +86,12 @@ namespace MonoGame.Content.Builder
             Flag = "rv",
             Description = "Rebuilds assets, not only when dependency dll write time changes, but when the dll version increased too.")]
         public bool RebuildOnlyIfDependencyVersionUpdated = false;
+
+        [CommandLineParameter(
+            Name = "parallelCores",
+            Flag = "pc",
+            Description = "Sets max allowed cpu cores to parallelize building content. If set to 1, it doesn't run in parallel. If set to smaller than 1, it uses the given fraction of the available cpu cores.")]
+        public float MaxParallelCores = 1f;
 
         [CommandLineParameter(
             Name = "clean",
@@ -306,11 +314,12 @@ namespace MonoGame.Content.Builder
             var intermediatePath = ReplaceSymbols(_intermediateDir);
             if (!Path.IsPathRooted(intermediatePath))
                 intermediatePath = PathHelper.Normalize(Path.GetFullPath(Path.Combine(projectDirectory, intermediatePath)));
-            
+
             _manager = new PipelineManager(projectDirectory, outputPath, intermediatePath);
             _manager.Logger = new ConsoleLogger();
             _manager.CompressContent = CompressContent;
             _manager.RebuildOnlyIfDependencyVersionUpdated = RebuildOnlyIfDependencyVersionUpdated;
+            _manager.MaxParallelCores = MaxParallelCores;
 
             // If the intent is to debug build, break at the original location
             // of any exception, eg, within the actual importer/processor.
@@ -338,13 +347,13 @@ namespace MonoGame.Content.Builder
                                 previousContent.Profile != Profile;
 
             // First clean previously built content.
-            for(int i = 0; i < previousContent.SourceFiles.Count; i++)
+            for (int i = 0; i < previousContent.SourceFiles.Count; i++)
             {
                 var sourceFile = previousContent.SourceFiles[i];
 
                 // This may be an old file (prior to MG 3.7) which doesn't have destination files:
                 string destFile = null;
-                if(i < previousContent.DestFiles.Count)
+                if (i < previousContent.DestFiles.Count)
                 {
                     destFile = previousContent.DestFiles[i];
                 }
@@ -353,7 +362,7 @@ namespace MonoGame.Content.Builder
                 var cleanOldContent = !inContent && !Incremental;
                 var cleanRebuiltContent = inContent && (Rebuild || Clean);
                 if (cleanRebuiltContent || cleanOldContent || targetChanged)
-                    _manager.CleanContent(sourceFile, destFile);                
+                    _manager.CleanContent(sourceFile, destFile);
             }
 
             // TODO: Should we be cleaning copy items?  I think maybe we should.
@@ -381,20 +390,36 @@ namespace MonoGame.Content.Builder
                 }
             }
 
-            foreach (var c in _content)
+            int successCount_ = 0;
+            int errorCount_ = 0;
+            int cpuCores = GetParallelCores();
+
+            if (cpuCores <= 1)
+            {
+                foreach (var c in _content)
+                {
+                    BuildContent(c);
+                }
+            }
+            else
+            {
+                var options = new ParallelOptions { MaxDegreeOfParallelism = cpuCores };
+                Parallel.ForEach(_content, options, BuildContent);
+            }
+
+            void BuildContent(ContentItem c)
             {
                 try
                 {
                     _manager.BuildContent(c.SourceFile,
-                                          c.OutputFile,
-                                          c.Importer,
-                                          c.Processor,
-                                          c.ProcessorParams);
+                                      c.OutputFile,
+                                      c.Importer,
+                                      c.Processor,
+                                      c.ProcessorParams);
 
                     newContent.SourceFiles.Add(c.SourceFile);
                     newContent.DestFiles.Add(c.OutputFile);
-
-                    ++successCount;
+                    Interlocked.Increment(ref successCount_);
                 }
                 catch (InvalidContentException ex)
                 {
@@ -408,23 +433,26 @@ namespace MonoGame.Content.Builder
                     }
                     message += ex.Message;
                     Console.WriteLine(message);
-                    ++errorCount;
+                    Interlocked.Increment(ref errorCount_);
                 }
                 catch (PipelineException ex)
                 {
                     Console.Error.WriteLine("{0}: error: {1}", c.SourceFile, ex.Message);
                     if (ex.InnerException != null)
                         Console.Error.WriteLine(ex.InnerException.ToString());
-                    ++errorCount;
+                    Interlocked.Increment(ref errorCount_);
                 }
                 catch (Exception ex)
                 {
                     Console.Error.WriteLine("{0}: error: {1}", c.SourceFile, ex.Message);
                     if (ex.InnerException != null)
                         Console.Error.WriteLine(ex.InnerException.ToString());
-                    ++errorCount;
+                    Interlocked.Increment(ref errorCount_);
                 }
             }
+
+            successCount += successCount_;
+            errorCount += errorCount_;
 
             // If this is an incremental build we merge the list
             // of previous content with the new list.
@@ -514,6 +542,25 @@ namespace MonoGame.Content.Builder
 
             // Dump the content build stats.
             _manager.ContentStats.Write(intermediatePath);
+        }
+
+        private int GetParallelCores()
+        {
+            int cpuCores;
+            if (_manager.MaxParallelCores > 1f)
+            {
+                cpuCores = (int)MathF.Round(_manager.MaxParallelCores);
+            }
+            else
+            {
+                cpuCores = (int)MathF.Round(_manager.MaxParallelCores * Environment.ProcessorCount);
+                if (cpuCores < 1)
+                {
+                    cpuCores = 1;
+                }
+            }
+
+            return cpuCores;
         }
 
         [CommandLineParameter(

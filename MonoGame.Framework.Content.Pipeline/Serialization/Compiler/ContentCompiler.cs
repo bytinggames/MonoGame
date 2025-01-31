@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
 {
@@ -15,7 +16,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
     /// </summary>
     public sealed class ContentCompiler
     {
-        readonly Dictionary<Type, Type> typeWriterMap = new Dictionary<Type, Type>();
+        readonly ConcurrentDictionary<Type, Type> typeWriterMap = new ConcurrentDictionary<Type, Type>();
 
         /// <summary>
         /// Initializes a new instance of ContentCompiler.
@@ -55,7 +56,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
                         while ((baseType != null) && (baseType.GetGenericTypeDefinition() != contentTypeWriterType))
                             baseType = baseType.BaseType;
                         if (baseType != null)
-                            typeWriterMap.Add(baseType, type);
+                            typeWriterMap.TryAdd(baseType, type);
                     }
                 }
             }
@@ -82,12 +83,12 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
                 var writerType = type.GetArrayRank() == 1 ? typeof(ArrayWriter<>) : typeof(MultiArrayWriter<>);
 
                 result = (ContentTypeWriter)Activator.CreateInstance(writerType.MakeGenericType(type.GetElementType()));
-                typeWriterMap.Add(contentTypeWriterType, result.GetType());
+                typeWriterMap.TryAdd(contentTypeWriterType, result.GetType());
             }
             else if (type.IsEnum)
             {
                 result = (ContentTypeWriter)Activator.CreateInstance(typeof(EnumWriter<>).MakeGenericType(type));
-                typeWriterMap.Add(contentTypeWriterType, result.GetType());
+                typeWriterMap.TryAdd(contentTypeWriterType, result.GetType());
             }
             else if (type.IsGenericType)
             {
@@ -127,7 +128,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
                     }
 
                     // save it for next time.
-                    typeWriterMap.Add(contentTypeWriterType, result.GetType());
+                    typeWriterMap.TryAdd(contentTypeWriterType, result.GetType());
                 }
                 catch (Exception)
                 {
@@ -137,7 +138,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
             else
             {
                 result = (ContentTypeWriter)Activator.CreateInstance(typeof(ReflectiveWriter<>).MakeGenericType(type));
-                typeWriterMap.Add(contentTypeWriterType, result.GetType());
+                typeWriterMap.TryAdd(contentTypeWriterType, result.GetType());
             }
 
 
