@@ -547,7 +547,7 @@ namespace MonoGame.Content.Builder
         private int GetParallelCores()
         {
             int cpuCores;
-            if (_manager.MaxParallelCores > 1f)
+            if (_manager.MaxParallelCores >= 1f)
             {
                 cpuCores = (int)MathF.Round(_manager.MaxParallelCores);
             }

@@ -21,7 +21,7 @@ namespace MonoGame.Content.Builder
 
                 args = [
                     //"/rebuildOnVersionUpdate:true",
-                    "/parallelCores:4",
+                    "/parallelCores:0.5",
                     "/platform:DesktopGL",
                     @"/outputDir:C:/Projects/SE/SE/Content/bin/DesktopGL/Content.Generated",
                     @"/intermediateDir:C:/Projects/SE/SE/Content/obj/DesktopGL/net8.0/Content.Generated",
