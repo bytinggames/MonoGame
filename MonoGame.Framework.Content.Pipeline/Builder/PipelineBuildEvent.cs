@@ -205,7 +205,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
 
             // Did the importer assembly change?
             if (manager.GetImporterAssemblyTimestamp(cachedEvent.Importer) > cachedEvent.ImporterTime
-                && (!manager.RebuildOnlyIfDependencyVersionUpdated || string.IsNullOrWhiteSpace(cachedEvent.ImporterVersion) || manager.GetImporterAssemblyVersion(cachedEvent.Importer) > new Version(cachedEvent.ImporterVersion)))
+                && (!manager.RebuildOnlyIfDependencyVersionUpdated || string.IsNullOrWhiteSpace(cachedEvent.ImporterVersion) || manager.GetImporterAssemblyVersion(cachedEvent.Importer) != new Version(cachedEvent.ImporterVersion)))
                 return true;
 
             // Did the importer change?
@@ -214,7 +214,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
 
             // Did the processor assembly change?
             if (manager.GetProcessorAssemblyTimestamp(cachedEvent.Processor) > cachedEvent.ProcessorTime
-                && (!manager.RebuildOnlyIfDependencyVersionUpdated || string.IsNullOrWhiteSpace(cachedEvent.ProcessorVersion) || manager.GetProcessorAssemblyVersion(cachedEvent.Processor) > new Version(cachedEvent.ProcessorVersion)))
+                && (!manager.RebuildOnlyIfDependencyVersionUpdated || string.IsNullOrWhiteSpace(cachedEvent.ProcessorVersion) || manager.GetProcessorAssemblyVersion(cachedEvent.Processor) != new Version(cachedEvent.ProcessorVersion)))
                 return true;
 
             // Did the processor change?
