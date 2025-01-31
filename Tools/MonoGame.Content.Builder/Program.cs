@@ -3,16 +3,33 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace MonoGame.Content.Builder
 {
     class Program
     {
+        static readonly bool testSE = false;
+
         static int Main(string[] args)
         {
+            if (testSE)
+            {
+                Environment.CurrentDirectory = "C:\\Projects\\SE\\SE\\";
+
+                string additionalArgs = "/define:Debug /define:Configuration=Debug /define:RuntimeIdentifier= /define:ConfigRuntime=Debug_ /@:C:\\Projects\\SE\\SE\\Content\\Content.Generated.mgcb";
+
+                args = [
+    "/rebuildOnVersionUpdate:true",
+"/platform:DesktopGL",
+@"/outputDir:C:/Projects/SE/SE/Content/bin/DesktopGL/Content.Generated",
+@"/intermediateDir:C:/Projects/SE/SE/Content/obj/DesktopGL/net8.0/Content.Generated",
+@"/workingDir:C:/Projects/SE/SE/Content/",
+                ];
+
+                args = additionalArgs.Split([' ']).Concat(args).ToArray();
+            }
+
             // We force all stderr to redirect to stdout
             // to avoid any out of order console output.
             Console.SetError(Console.Out);

@@ -59,12 +59,22 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </summary>
         public DateTime ImporterTime { get; set; }
 
+        /// <summary>
+        /// The version of the DLL containing the importer.
+        /// </summary>
+        public string ImporterVersion { get; set; }
+
         public string Processor { get; set; }
 
         /// <summary>
         /// The date/time stamp of the DLL containing the processor.
         /// </summary>
         public DateTime ProcessorTime { get; set; }
+
+        /// <summary>
+        /// The version of the DLL containing the processor.
+        /// </summary>
+        public string ProcessorVersion { get; set; }
 
         [XmlIgnore]
         public OpaqueDataDictionary Parameters { get; set; }
@@ -194,7 +204,8 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                 return true;
 
             // Did the importer assembly change?
-            if (manager.GetImporterAssemblyTimestamp(cachedEvent.Importer) > cachedEvent.ImporterTime)
+            if (manager.GetImporterAssemblyTimestamp(cachedEvent.Importer) > cachedEvent.ImporterTime
+                && (!manager.RebuildOnlyIfDependencyVersionUpdated || string.IsNullOrWhiteSpace(cachedEvent.ImporterVersion) || manager.GetImporterAssemblyVersion(cachedEvent.Importer) > new Version(cachedEvent.ImporterVersion)))
                 return true;
 
             // Did the importer change?
@@ -202,7 +213,8 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                 return true;
 
             // Did the processor assembly change?
-            if (manager.GetProcessorAssemblyTimestamp(cachedEvent.Processor) > cachedEvent.ProcessorTime)
+            if (manager.GetProcessorAssemblyTimestamp(cachedEvent.Processor) > cachedEvent.ProcessorTime
+                && (!manager.RebuildOnlyIfDependencyVersionUpdated || string.IsNullOrWhiteSpace(cachedEvent.ProcessorVersion) || manager.GetProcessorAssemblyVersion(cachedEvent.Processor) > new Version(cachedEvent.ProcessorVersion)))
                 return true;
 
             // Did the processor change?

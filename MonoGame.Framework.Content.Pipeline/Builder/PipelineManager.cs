@@ -25,6 +25,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             public ContentImporterAttribute attribute;
             public Type type;
             public DateTime assemblyTimestamp;
+            public Version assemblyVersion;
         };
 
         private List<ImporterInfo> _importers;
@@ -35,6 +36,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             public ContentProcessorAttribute attribute;
             public Type type;
             public DateTime assemblyTimestamp;
+            public Version assemblyVersion;
         };
 
         private List<ProcessorInfo> _processors;
@@ -91,6 +93,14 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// thrown from the context. Default value is true.
         /// </summary>
         public bool RethrowExceptions { get; set; }
+
+        /// <summary>
+        /// Assets will be rebuilt if the write time of the dependent DLLs is less than the asset build time.
+        /// Set this to true if you also want to check if the version of the assemblies has increased.
+        /// This is useful, when most dependency dll changes do not change anything regarding the building of assets.
+        /// In this case the version of the dependant dll must be updated to trigger a rebuild of an asset.
+        /// </summary>
+        public bool RebuildOnlyIfDependencyVersionUpdated { get; set; }
 
         public PipelineManager(string projectDir, string outputDir, string intermediateDir)
         {
@@ -154,6 +164,7 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             {
                 Type[] exportedTypes;
                 DateTime assemblyTimestamp;
+                Version assemblyVersion;
                 try
                 {
                     Assembly a;
@@ -164,6 +175,8 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
 
                     exportedTypes = a.GetTypes();
                     assemblyTimestamp = File.GetLastWriteTime(a.Location);
+                    string versionStr = FileVersionInfo.GetVersionInfo(a.Location).FileVersion;
+                    assemblyVersion = versionStr == null ? null : new Version(versionStr);
                 }
                 catch (BadImageFormatException e)
                 {
@@ -195,7 +208,8 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                             {
                                 attribute = importerAttribute,
                                 type = t,
-                                assemblyTimestamp = assemblyTimestamp
+                                assemblyTimestamp = assemblyTimestamp,
+                                assemblyVersion = assemblyVersion
                             });
                         }
                         else
@@ -208,7 +222,8 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                             {
                                 attribute = importerAttribute,
                                 type = t,
-                                assemblyTimestamp = assemblyTimestamp
+                                assemblyTimestamp = assemblyTimestamp,
+                                assemblyVersion = assemblyVersion
                             });
                         }
                     }
@@ -222,7 +237,8 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                             {
                                 attribute = processorAttribute,
                                 type = t,
-                                assemblyTimestamp = assemblyTimestamp
+                                assemblyTimestamp = assemblyTimestamp,
+                                assemblyVersion = assemblyVersion
                             });
                         }
                     }
@@ -308,6 +324,21 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             }
 
             return DateTime.MaxValue;
+        }
+
+        public Version GetImporterAssemblyVersion(string name)
+        {
+            if (_importers == null)
+                ResolveAssemblies();
+
+            // Search for the importer.
+            foreach (var info in _importers)
+            {
+                if (info.type.Name.Equals(name))
+                    return info.assemblyVersion;
+            }
+
+            return null;
         }
 
         public string FindDefaultProcessor(string importer)
@@ -443,6 +474,21 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             }
 
             return DateTime.MaxValue;
+        }
+
+        public Version GetProcessorAssemblyVersion(string name)
+        {
+            if (_importers == null)
+                ResolveAssemblies();
+
+            // Search for the importer.
+            foreach (var info in _processors)
+            {
+                if (info.type.Name.Equals(name))
+                    return info.assemblyVersion;
+            }
+
+            return null;
         }
 
         public OpaqueDataDictionary ValidateProcessorParameters(string name, OpaqueDataDictionary processorParameters)
@@ -622,7 +668,9 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
 
                     // Store the timestamp of the DLLs containing the importer and processor.
                     pipelineEvent.ImporterTime = GetImporterAssemblyTimestamp(pipelineEvent.Importer);
+                    pipelineEvent.ImporterVersion = GetImporterAssemblyVersion(pipelineEvent.Importer).ToString();
                     pipelineEvent.ProcessorTime = GetProcessorAssemblyTimestamp(pipelineEvent.Processor);
+                    pipelineEvent.ProcessorVersion = GetProcessorAssemblyVersion(pipelineEvent.Processor).ToString();
 
                     // Store the new event into the intermediate folder.
                     pipelineEvent.Save(eventFilepath);

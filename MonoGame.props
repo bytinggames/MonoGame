@@ -5,6 +5,10 @@
     <RepositoryUrl>https://github.com/bytinggames/MonoGame</RepositoryUrl>
     <Authors>MonoGame Team, Byting Games</Authors>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+	  <!-- to set the correct version when building within Visual Studio.
+	  This must be the same as in build.cake:10-->
+	  <Version>3.8.1.18</Version>
+	  <AssemblyVersion>3.8.1.18</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

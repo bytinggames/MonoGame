@@ -80,6 +80,12 @@ namespace MonoGame.Content.Builder
         public bool Rebuild = false;
 
         [CommandLineParameter(
+            Name = "rebuildOnVersionUpdate",
+            Flag = "rv",
+            Description = "Rebuilds assets, not only when dependency dll write time changes, but when the dll version increased too.")]
+        public bool RebuildOnlyIfDependencyVersionUpdated = false;
+
+        [CommandLineParameter(
             Name = "clean",
             Flag = "c",
             Description = "Delete all previously built content and intermediate files.")]
@@ -304,6 +310,7 @@ namespace MonoGame.Content.Builder
             _manager = new PipelineManager(projectDirectory, outputPath, intermediatePath);
             _manager.Logger = new ConsoleLogger();
             _manager.CompressContent = CompressContent;
+            _manager.RebuildOnlyIfDependencyVersionUpdated = RebuildOnlyIfDependencyVersionUpdated;
 
             // If the intent is to debug build, break at the original location
             // of any exception, eg, within the actual importer/processor.
