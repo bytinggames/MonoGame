@@ -39,14 +39,15 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         #region Fields
 
-        private SurfaceFormat format;
-        private int height;
-        private int width;
+        private readonly SurfaceFormat format;
+        private readonly int height;
+        private readonly int width;
+        private readonly int refreshRate;
 
         #endregion Fields
 
         #region Properties
-        
+
         public float AspectRatio {
             get { return (float)width / (float)height; }
         }
@@ -62,7 +63,13 @@ namespace Microsoft.Xna.Framework.Graphics
         public int Width {
             get { return this.width; }
         }
-        
+
+        /// <summary>Not supported on some systems, therefore 0. Currently only supported on DestkopGL</summary>
+        public int RefreshRate
+        {
+            get { return this.refreshRate; }
+        }
+
         public Rectangle TitleSafeArea {
             get { return GraphicsDevice.GetTitleSafeArea(0, 0, width, height); }
         }
@@ -71,11 +78,12 @@ namespace Microsoft.Xna.Framework.Graphics
 
         #region Constructors
         
-        internal DisplayMode(int width, int height, SurfaceFormat format)
+        internal DisplayMode(int width, int height, SurfaceFormat format, int refreshRate = 0)
         {
             this.width = width;
             this.height = height;
             this.format = format;
+            this.refreshRate = Math.Max(0, refreshRate);
         }
 
         #endregion Constructors
