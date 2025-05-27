@@ -68,7 +68,9 @@ internal static class Sdl
         ControllerButtonUp = 0x652,
         ControllerDeviceAdded = 0x653,
         ControllerDeviceRemoved = 0x654,
-        ControllerDeviceRemapped = 0x654,
+        ControllerDeviceRemapped = 0x655,
+        // ... (https://wiki.libsdl.org/SDL2/SDL_EventType)
+        ControllerSensorUpdate = 0x659,
 
         FingerDown = 0x700,
         FingerUp = 0x701,
@@ -1007,6 +1009,19 @@ internal static class Sdl
             Max,
         }
 
+        public enum SensorType
+        {
+            Invalid = -1,    // Returned for an invalid sensor
+            Unknown,         // Unknown sensor type
+            Accel,           // Accelerometer
+            Gyro,            // Gyroscope
+            AccelL,          // Accelerometer for left Joy-Con controller and Wii nunchuk
+            GyroL,           // Gyroscope for left Joy-Con controller
+            AccelR,          // Accelerometer for right Joy-Con controller
+            GyroR,           // Gyroscope for right Joy-Con controller
+            MAX
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct DeviceEvent
         {
@@ -1047,6 +1062,18 @@ internal static class Sdl
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate byte d_sdl_gamecontrollergetbutton(IntPtr gamecontroller, Button button);
         public static d_sdl_gamecontrollergetbutton GetButton = FuncLoader.LoadFunction<d_sdl_gamecontrollergetbutton>(NativeLibrary, "SDL_GameControllerGetButton");
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate bool d_sdl_gamecontrollerhassensor(IntPtr gamecontroller, SensorType sensorType);
+        public static d_sdl_gamecontrollerhassensor HasSensor = FuncLoader.LoadFunction<d_sdl_gamecontrollerhassensor>(NativeLibrary, "SDL_GameControllerHasSensor");
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate uint d_sdl_gamecontrollersetsensorenabled(IntPtr gamecontroller, SensorType sensorType, bool enabled);
+        public static d_sdl_gamecontrollersetsensorenabled SetSensorEnabled = FuncLoader.LoadFunction<d_sdl_gamecontrollersetsensorenabled>(NativeLibrary, "SDL_GameControllerSetSensorEnabled");
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate uint d_sdl_gamecontrollergetsensordata(IntPtr gamecontroller, SensorType sensorType, float[] floatOutput, int num_values);
+        public static d_sdl_gamecontrollergetsensordata GetSensorData = FuncLoader.LoadFunction<d_sdl_gamecontrollergetsensordata>(NativeLibrary, "SDL_GameControllerGetSensorData");
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr d_sdl_gamecontrollergetjoystick(IntPtr gamecontroller);

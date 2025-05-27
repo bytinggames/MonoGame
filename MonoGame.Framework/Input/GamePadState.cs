@@ -54,6 +54,8 @@ namespace Microsoft.Xna.Framework.Input
         /// <value>Positions of the triggers.</value>
         public GamePadTriggers Triggers { get; internal set; }
 
+        public GamePadSensors Sensors { get; internal set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Input.GamePadState"/> struct
         /// using the specified GamePadThumbSticks, GamePadTriggers, GamePadButtons, and GamePadDPad.
@@ -62,12 +64,13 @@ namespace Microsoft.Xna.Framework.Input
         /// <param name="triggers">Initial trigger state..</param>
         /// <param name="buttons">Initial button state.</param>
         /// <param name="dPad">Initial directional pad state.</param>
-        public GamePadState(GamePadThumbSticks thumbSticks, GamePadTriggers triggers, GamePadButtons buttons, GamePadDPad dPad) : this()
+        public GamePadState(GamePadThumbSticks thumbSticks, GamePadTriggers triggers, GamePadButtons buttons, GamePadDPad dPad, GamePadSensors sensors) : this()
         {
             ThumbSticks = thumbSticks;
             Triggers = triggers;
             Buttons = buttons;
             DPad = dPad;
+            Sensors = sensors;
             IsConnected = true;
 
             PlatformConstruct();
@@ -82,8 +85,8 @@ namespace Microsoft.Xna.Framework.Input
         /// <param name="leftTrigger">Left trigger value. This value is clamped between 0.0 and 1.0.</param>
         /// <param name="rightTrigger">Right trigger value. This value is clamped between 0.0 and 1.0.</param>
         /// <param name="button">Button(s) to initialize as pressed.</param>
-        public GamePadState(Vector2 leftThumbStick, Vector2 rightThumbStick, float leftTrigger, float rightTrigger, Buttons button)
-            : this(new GamePadThumbSticks(leftThumbStick, rightThumbStick), new GamePadTriggers(leftTrigger, rightTrigger), new GamePadButtons(button), new GamePadDPad(button))
+        public GamePadState(Vector2 leftThumbStick, Vector2 rightThumbStick, float leftTrigger, float rightTrigger, Buttons button, GamePadSensors sensors)
+            : this(new GamePadThumbSticks(leftThumbStick, rightThumbStick), new GamePadTriggers(leftTrigger, rightTrigger), new GamePadButtons(button), new GamePadDPad(button), sensors)
         {
         }
 
@@ -96,8 +99,8 @@ namespace Microsoft.Xna.Framework.Input
         /// <param name="leftTrigger">Left trigger value. This value is clamped between 0.0 and 1.0.</param>
         /// <param name="rightTrigger">Right trigger value. This value is clamped between 0.0 and 1.0.</param>
         /// <param name="buttons"> Array of Buttons to initialize as pressed.</param>
-        public GamePadState(Vector2 leftThumbStick, Vector2 rightThumbStick, float leftTrigger, float rightTrigger, Buttons[] buttons)
-            : this(new GamePadThumbSticks(leftThumbStick, rightThumbStick), new GamePadTriggers(leftTrigger, rightTrigger), new GamePadButtons(buttons), new GamePadDPad(buttons))
+        public GamePadState(Vector2 leftThumbStick, Vector2 rightThumbStick, float leftTrigger, float rightTrigger, Buttons[] buttons, GamePadSensors sensors)
+            : this(new GamePadThumbSticks(leftThumbStick, rightThumbStick), new GamePadTriggers(leftTrigger, rightTrigger), new GamePadButtons(buttons), new GamePadDPad(buttons), sensors)
         {
         }
 
@@ -163,7 +166,8 @@ namespace Microsoft.Xna.Framework.Input
                 (left.Buttons == right.Buttons) &&
                 (left.DPad == right.DPad) &&
                 (left.ThumbSticks == right.ThumbSticks) &&
-                (left.Triggers == right.Triggers);
+                (left.Triggers == right.Triggers) &&
+                (left.Sensors == right.Sensors);
         }
 
         /// <summary>
@@ -203,6 +207,7 @@ namespace Microsoft.Xna.Framework.Input
                 hash = (hash * 397) ^ DPad.GetHashCode();
                 hash = (hash * 397) ^ ThumbSticks.GetHashCode();
                 hash = (hash * 397) ^ Triggers.GetHashCode();
+                hash = (hash * 397) ^ Sensors.GetHashCode();
                 return hash;
             }
         }
@@ -222,6 +227,7 @@ namespace Microsoft.Xna.Framework.Input
                    ", DPad=" + DPad +
                    ", ThumbSticks=" + ThumbSticks +
                    ", Triggers=" + Triggers +
+                   ", Sensors=" + Sensors +
                    "]";
         }
     }

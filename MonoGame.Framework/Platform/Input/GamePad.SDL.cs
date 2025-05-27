@@ -15,10 +15,14 @@ namespace Microsoft.Xna.Framework.Input
         {
             public IntPtr Device;
             public int PacketNumber;
+            public bool[] SensorsEnabled { get; } = new bool[Enum.GetNames<Sdl.GameController.SensorType>().Length];
+            public bool AnySensorEnabled;
         }
 
         private static readonly Dictionary<int, GamePadInfo> Gamepads = new Dictionary<int, GamePadInfo>();
         private static readonly Dictionary<int, int> _translationTable = new Dictionary<int, int>();
+        private static float[] sensorData = new float[3];
+        private static readonly GamePadSensors disabledSensors = new();
 
         public static void InitDatabase()
         {
@@ -43,6 +47,18 @@ namespace Microsoft.Xna.Framework.Input
         {
             var gamepad = new GamePadInfo();
             gamepad.Device = Sdl.GameController.Open(deviceId);
+
+            for (Sdl.GameController.SensorType sensor = Sdl.GameController.SensorType.Unknown + 1; sensor < Sdl.GameController.SensorType.MAX; sensor++)
+            {
+                bool hasSensor = Sdl.GameController.HasSensor(gamepad.Device, sensor);
+    
+                gamepad.SensorsEnabled[(int)sensor] = hasSensor;
+                Sdl.GameController.SetSensorEnabled(gamepad.Device, sensor, hasSensor);
+                if (hasSensor)
+                {
+                    gamepad.AnySensorEnabled = true;
+                }
+            }
 
             var id = 0;
             while (Gamepads.ContainsKey(id))
@@ -209,7 +225,7 @@ namespace Microsoft.Xna.Framework.Input
             return axis / 32767f;
         }
 
-        private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode)
+                private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode)
         {
             if (!Gamepads.ContainsKey(index))
                 return GamePadState.Default;
@@ -262,9 +278,47 @@ namespace Microsoft.Xna.Framework.Input
                     (Sdl.GameController.GetButton(gdevice, Sdl.GameController.Button.DpadRight) == 1) ? ButtonState.Pressed : ButtonState.Released
                 );
 
-            var ret = new GamePadState(thumbSticks, triggers, buttons, dPad);
+            GamePadSensors sensors;
+            if (gamepadInfo.AnySensorEnabled)
+            {
+                sensors =
+                    new GamePadSensors(
+                        new GamePadSensor(
+                            -GetSensorData(Sdl.GameController.SensorType.Gyro),
+                            GetSensorData(Sdl.GameController.SensorType.Accel)
+                        ),
+                        new GamePadSensor(
+                            -GetSensorData(Sdl.GameController.SensorType.GyroL),
+                            GetSensorData(Sdl.GameController.SensorType.AccelL)
+                        ),
+                        new GamePadSensor(
+                            -GetSensorData(Sdl.GameController.SensorType.GyroR),
+                            GetSensorData(Sdl.GameController.SensorType.AccelR)
+                        )
+                    );
+            }
+            else
+            {
+                sensors = disabledSensors;
+            }
+
+            var ret = new GamePadState(thumbSticks, triggers, buttons, dPad, sensors);
             ret.PacketNumber = gamepadInfo.PacketNumber;
             return ret;
+
+            Vector3 GetSensorData(Sdl.GameController.SensorType sensorType)
+            {
+                if (!gamepadInfo.SensorsEnabled[(int)sensorType])
+                {
+                    return Vector3.Zero;
+                }
+                uint err = Sdl.GameController.GetSensorData(gdevice, sensorType, sensorData, sensorData.Length);
+                if (err != 0)
+                {
+                    return Vector3.Zero;
+                }
+                return new Vector3(sensorData[0], sensorData[1], sensorData[2]);
+            }
         }
 
         private static bool PlatformSetVibration(int index, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)

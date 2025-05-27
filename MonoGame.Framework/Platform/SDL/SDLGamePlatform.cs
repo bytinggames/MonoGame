@@ -124,6 +124,7 @@ namespace Microsoft.Xna.Framework
                     case Sdl.EventType.ControllerButtonUp:
                     case Sdl.EventType.ControllerButtonDown:
                     case Sdl.EventType.ControllerAxisMotion:
+                    case Sdl.EventType.ControllerSensorUpdate: // not 100% sure, but this should probably also update the packet info?
                         GamePad.UpdatePacketInfo(ev.ControllerDevice.Which, ev.ControllerDevice.TimeStamp);
                         break;
                     case Sdl.EventType.MouseWheel:
