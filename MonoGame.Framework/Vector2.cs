@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.Xna.Framework
 {
@@ -34,12 +35,14 @@ namespace Microsoft.Xna.Framework
         /// The x coordinate of this <see cref="Vector2"/>.
         /// </summary>
         [DataMember]
+        [JsonInclude]
         public float X;
 
         /// <summary>
         /// The y coordinate of this <see cref="Vector2"/>.
         /// </summary>
         [DataMember]
+        [JsonInclude]
         public float Y;
 
         #endregion
