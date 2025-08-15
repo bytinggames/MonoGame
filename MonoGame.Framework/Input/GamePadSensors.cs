@@ -2,14 +2,21 @@
 
 namespace Microsoft.Xna.Framework.Input
 {
-    public struct GamePadSensors(GamePadSensor main, GamePadSensor left, GamePadSensor right)
+    public struct GamePadSensors
     {
         /// <summary>Default</summary>
-        public GamePadSensor Main { get; private set; } = main;
+        public GamePadSensor Main { get; private set; }
         /// <summary>For joy cons f.ex.</summary>
-        public GamePadSensor Left { get; private set; } = left;
+        public GamePadSensor Left { get; private set; }
         /// <summary>For joy cons f.ex.</summary>
-        public GamePadSensor Right { get; private set; } = right;
+        public GamePadSensor Right { get; private set; }
+
+        public GamePadSensors(GamePadSensor main, GamePadSensor left, GamePadSensor right)
+        {
+            Main = main;
+            Left = left;
+            Right = right;
+        }
 
         public static bool operator ==(GamePadSensors left, GamePadSensors right)
         {
@@ -25,7 +32,7 @@ namespace Microsoft.Xna.Framework.Input
 
         public override bool Equals(object obj)
         {
-            return (obj is GamePadSensors g) && (this == g);
+            return (obj is GamePadSensors) && (this == (GamePadSensors)obj);
         }
 
         public override int GetHashCode()
@@ -35,7 +42,7 @@ namespace Microsoft.Xna.Framework.Input
 
         public override string ToString()
         {
-            return $"Main={Main} Left={Left} Right={Right}";
+            return "Main="+Main+" Left="+Left+" Right="+Right;
         }
     }
 }

@@ -223,7 +223,8 @@ namespace Microsoft.Xna.Framework.Input
                 thumbSticks: thumbSticks,
                 triggers: triggers,
                 buttons: buttons,
-                dPad: dpadState);
+                dPad: dpadState,
+                sensors: new GamePadSensors()); // sensors currently not supported on DirectX
 
             state.PacketNumber = packetNumber;
 
