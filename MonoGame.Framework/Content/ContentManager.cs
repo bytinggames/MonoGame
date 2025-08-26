@@ -445,13 +445,24 @@ namespace Microsoft.Xna.Framework.Content
 
 		public virtual void Unload()
 		{
-		    // Look for disposable assets.
-		    foreach (var disposable in disposableAssets)
-		    {
-		        if (disposable != null)
-		            disposable.Dispose();
-		    }
-			disposableAssets.Clear();
+            // Look for disposable assets.
+            while (disposableAssets.Count > 0)
+            {
+                IDisposable disposable = disposableAssets[0];
+                if (disposable != null)
+                {
+                    disposable.Dispose();
+                }
+                // in case the order of disposableAssets changed during the disposal, check again to verify the correct object is removed
+                if (disposable == disposableAssets[0])
+                {
+                    disposableAssets.RemoveAt(0);
+                }
+                else if (disposable != null)
+                {
+                    disposableAssets.Remove(disposable);
+                }
+            }
 		    loadedAssets.Clear();
 		}
 
