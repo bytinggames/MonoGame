@@ -3,11 +3,12 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.Text;
-using System.Runtime.Serialization;
 using System.Diagnostics;
-using System.Text.Json.Serialization;
 using System.Globalization;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.Xna.Framework
 {
@@ -316,13 +317,13 @@ namespace Microsoft.Xna.Framework
             _packedValue = ((uint)alpha << 24) | ((uint)b << 16) | ((uint)g << 8) | (r);
         }
 
+        /// <summary>Performance can be improved</summary>
         public Color(string hex)
         {
             if (string.IsNullOrEmpty(hex)
                 || (hex.Length != 1 && hex.Length != 3 && hex.Length != 4 && hex.Length != 6 && hex.Length != 8))
             {
-                // TODO: test if this is correct
-                _packedValue = uint.MaxValue;
+                _packedValue = uint.MaxValue; // Color.White
                 return;
             }
 
@@ -339,7 +340,8 @@ namespace Microsoft.Xna.Framework
                 hex = hex[0].ToString() + hex[0] + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
             }
 
-            byte r, g, b, a = 255;
+            byte r, g, b, a;
+
             byte.TryParse(hex.Substring(0, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out r);
             byte.TryParse(hex.Substring(2, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out g);
             byte.TryParse(hex.Substring(4, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out b);
@@ -348,11 +350,12 @@ namespace Microsoft.Xna.Framework
             {
                 byte.TryParse(hex.Substring(6, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out a);
             }
+            else
+            {
+                a = 255;
+            }
 
-            R = r;
-            G = g;
-            B = b;
-            A = a;
+            this._packedValue = r | ((uint)g << 8) | ((uint)b << 16) | ((uint)a << 24);
         }
 
         public string ToHex()
@@ -1980,4 +1983,28 @@ namespace Microsoft.Xna.Framework
             a = A / 255f;
         }
     }
+
+    class ColorJsonConverter : JsonConverter<Color>
+    {
+        public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return new Color(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToHex());
+        }
+
+        public override Color ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return new Color(reader.GetString());
+        }
+
+        public override void WriteAsPropertyName(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)
+        {
+            writer.WritePropertyName(value.ToHex());
+        }
+    }
+
 }
