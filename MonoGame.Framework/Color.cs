@@ -6,6 +6,8 @@ using System;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.Globalization;
 
 namespace Microsoft.Xna.Framework
 {
@@ -14,6 +16,7 @@ namespace Microsoft.Xna.Framework
     /// </summary>
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]
+    [JsonConverter(typeof(ColorJsonConverter))]
     public struct Color : IEquatable<Color>
     {
         static Color()
@@ -162,6 +165,8 @@ namespace Microsoft.Xna.Framework
             YellowGreen = new Color(0xff32cd9a);
         }
 
+        static readonly CultureInfo hexToColorCultureInfo = new CultureInfo("en-GB");
+
         // Stored as RGBA with R in the least significant octet:
         // |-------|-------|-------|-------
         // A       B       G       R
@@ -309,6 +314,59 @@ namespace Microsoft.Xna.Framework
         public Color(byte r, byte g, byte b, byte alpha)
         {
             _packedValue = ((uint)alpha << 24) | ((uint)b << 16) | ((uint)g << 8) | (r);
+        }
+
+        public Color(string hex)
+        {
+            if (string.IsNullOrEmpty(hex)
+                || (hex.Length != 1 && hex.Length != 3 && hex.Length != 4 && hex.Length != 6 && hex.Length != 8))
+            {
+                // TODO: test if this is correct
+                _packedValue = uint.MaxValue;
+                return;
+            }
+
+            if (hex.Length == 1)
+            {
+                hex = new string(hex[0], 6);
+            }
+            else if (hex.Length == 3)
+            {
+                hex = hex.Insert(0, hex[0].ToString()).Insert(2, hex[1].ToString()).Insert(4, hex[2].ToString());
+            }
+            else if (hex.Length == 4)
+            {
+                hex = hex[0].ToString() + hex[0] + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
+            }
+
+            byte r, g, b, a = 255;
+            byte.TryParse(hex.Substring(0, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out r);
+            byte.TryParse(hex.Substring(2, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out g);
+            byte.TryParse(hex.Substring(4, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out b);
+
+            if (hex.Length == 8)
+            {
+                byte.TryParse(hex.Substring(6, 2), NumberStyles.HexNumber, hexToColorCultureInfo, out a);
+            }
+
+            R = r;
+            G = g;
+            B = b;
+            A = a;
+        }
+
+        public string ToHex()
+        {
+            string hex = "";
+            hex += R.ToString("X2");
+            hex += G.ToString("X2");
+            hex += B.ToString("X2");
+            if (A != 255)
+            {
+                hex += A.ToString("X2");
+            }
+
+            return hex;
         }
 
         /// <summary>
