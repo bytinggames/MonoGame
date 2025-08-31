@@ -57,7 +57,7 @@ namespace Microsoft.Xna.Framework.Input
             return new GamePadCapabilities { IsConnected = false };
         }
                
-        private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode)
+        private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode, Vector3 additionalGyro, Vector3 additionalAcceleration)
         {
             var ind = (GCControllerPlayerIndex)index;
 

@@ -104,7 +104,23 @@ namespace Microsoft.Xna.Framework.Input
             if (index < 0 || index >= PlatformGetMaxNumberOfGamePads())
                 return GamePadState.Default;
 
-            return PlatformGetState(index, leftDeadZoneMode, rightDeadZoneMode);
+            return GetState(index, leftDeadZoneMode, rightDeadZoneMode, Vector3.Zero, Vector3.Zero);
+        }
+
+        /// <summary>
+        /// Gets the current state of a game pad controller, using a specified dead zone
+        /// on analog stick positions.
+        /// </summary>
+        /// <param name="index">Index for the controller you want to query.</param>
+        /// <param name="leftDeadZoneMode">Enumerated value that specifies what dead zone type to use for the left stick.</param>
+        /// <param name="rightDeadZoneMode">Enumerated value that specifies what dead zone type to use for the right stick.</param>
+        /// <returns>The state of the controller.</returns>
+        public static GamePadState GetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode, Vector3 additionalGyro, Vector3 additionalAcceleration)
+        {
+            if (index < 0 || index >= PlatformGetMaxNumberOfGamePads())
+                return GamePadState.Default;
+
+            return PlatformGetState(index, leftDeadZoneMode, rightDeadZoneMode, additionalGyro, additionalAcceleration);
         }
 
         /// <summary>

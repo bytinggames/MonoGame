@@ -68,7 +68,7 @@ namespace Microsoft.Xna.Framework.Input
             };
         }
 
-        private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode)
+        private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode, Vector3 additionalGyro, Vector3 additionalAcceleration)
         {
             var state = GamePadState.Default;
             var jcap = Joystick.GetCapabilities(index);
