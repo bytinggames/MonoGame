@@ -359,6 +359,11 @@ namespace Microsoft.Xna.Framework
             get { return Platform.Window; }
         }
 
+        /// <summary>
+        /// Used for when we know the game lags (f.ex. when a loading screen is happening) and we don't want to catch up with the updates afterwards
+        /// </summary>
+        public bool MaxTimeStepEqualsFixedTimeStep { get; set; } = false;
+
         #endregion Properties
 
         #region Internal Properties
@@ -584,8 +589,16 @@ namespace Microsoft.Xna.Framework
             }
 
             // Do not allow any update to take longer than our maximum.
-            if (_accumulatedElapsedTime > _maxElapsedTime)
-                _accumulatedElapsedTime = _maxElapsedTime;
+            if (MaxTimeStepEqualsFixedTimeStep)
+            {
+                if (_accumulatedElapsedTime > TargetElapsedTime * 1.999) // times 1.999 to give a bit of puffer
+                    _accumulatedElapsedTime = TargetElapsedTime * 1.999;
+            }
+            else
+            {
+                if (_accumulatedElapsedTime > _maxElapsedTime)
+                    _accumulatedElapsedTime = _maxElapsedTime;
+            }
 
             if (IsFixedTimeStep)
             {
