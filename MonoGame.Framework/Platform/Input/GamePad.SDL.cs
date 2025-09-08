@@ -225,7 +225,7 @@ namespace Microsoft.Xna.Framework.Input
             return axis / 32767f;
         }
 
-                private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode)
+                private static GamePadState PlatformGetState(int index, GamePadDeadZone leftDeadZoneMode, GamePadDeadZone rightDeadZoneMode, Vector3 additionalGyro, Vector3 additionalAcceleration)
         {
             if (!Gamepads.ContainsKey(index))
                 return GamePadState.Default;
@@ -284,8 +284,8 @@ namespace Microsoft.Xna.Framework.Input
                 sensors =
                     new GamePadSensors(
                         new GamePadSensor(
-                            -GetSensorData(Sdl.GameController.SensorType.Gyro),
-                            GetSensorData(Sdl.GameController.SensorType.Accel)
+                            -GetSensorData(Sdl.GameController.SensorType.Gyro) + additionalGyro,
+                            GetSensorData(Sdl.GameController.SensorType.Accel) + additionalAcceleration
                         ),
                         new GamePadSensor(
                             -GetSensorData(Sdl.GameController.SensorType.GyroL),
