@@ -362,7 +362,7 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// Used for when we know the game lags (f.ex. when a loading screen is happening) and we don't want to catch up with the updates afterwards
         /// </summary>
-        public bool MaxTimeStepEqualsFixedTimeStep { get; set; } = false;
+        public bool MaxTimeStepEqualsFixedTimeStep { get; set; }
 
         #endregion Properties
 
