@@ -9,7 +9,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
     [ContentTypeWriter]
     class ModelWriter : BuiltInContentWriter<ModelContent>
     {
-        protected internal override void Write(ContentWriter output, ModelContent value)
+        public override void Write(ContentWriter output, ModelContent value)
         {
             WriteBones(output, value.Bones);
 

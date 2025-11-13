@@ -9,7 +9,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
     [ContentTypeWriter]
     class VertexBufferWriter : BuiltInContentWriter<VertexBufferContent>
     {
-        protected internal override void Write(ContentWriter output, VertexBufferContent value)
+        public override void Write(ContentWriter output, VertexBufferContent value)
         {
             output.WriteRawObject(value.VertexDeclaration);
             output.Write((uint)(value.VertexData.Length / value.VertexDeclaration.VertexStride));

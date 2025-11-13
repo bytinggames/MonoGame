@@ -14,7 +14,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
     [ContentTypeWriter]
     public class SpriteFontContentWriter : ContentTypeWriter<SpriteFontContent>
     {
-        protected internal override void Write(ContentWriter output, SpriteFontContent value)
+        public override void Write(ContentWriter output, SpriteFontContent value)
         {
             output.WriteObject(value.Texture);
             output.WriteObject(value.Glyphs);

@@ -115,6 +115,6 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
         /// </summary>
         /// <param name="output">The content writer serializing the value.</param>
         /// <param name="value">The resultant object.</param>
-        protected internal abstract void Write(ContentWriter output, object value);
+        public abstract void Write(ContentWriter output, object value);
     }
 }

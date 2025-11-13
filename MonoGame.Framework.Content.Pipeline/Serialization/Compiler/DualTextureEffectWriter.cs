@@ -9,7 +9,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
     [ContentTypeWriter]
     class DualTextureEffectWriter : BuiltInContentWriter<DualTextureMaterialContent>
     {
-        protected internal override void Write(ContentWriter output, DualTextureMaterialContent value)
+        public override void Write(ContentWriter output, DualTextureMaterialContent value)
         {
             output.WriteExternalReference(value.Textures.ContainsKey(DualTextureMaterialContent.TextureKey) ? value.Texture : null);
             output.WriteExternalReference(value.Textures.ContainsKey(DualTextureMaterialContent.Texture2Key) ? value.Texture2 : null);

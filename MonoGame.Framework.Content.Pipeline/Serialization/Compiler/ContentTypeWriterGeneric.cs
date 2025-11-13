@@ -24,7 +24,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
         /// </summary>
         /// <param name="output">The content writer serializing the value.</param>
         /// <param name="value">The value to write.</param>
-        protected internal override void Write(ContentWriter output, object value)
+        public override void Write(ContentWriter output, object value)
         {
             Write(output, (T)value);
         }
@@ -34,6 +34,6 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
         /// </summary>
         /// <param name="output">The content writer serializing the value.</param>
         /// <param name="value">The value to write.</param>
-        protected internal abstract void Write(ContentWriter output, T value);
+        public abstract void Write(ContentWriter output, T value);
     }
 }

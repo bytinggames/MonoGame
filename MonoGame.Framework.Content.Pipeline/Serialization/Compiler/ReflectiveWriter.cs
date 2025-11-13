@@ -174,7 +174,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
                     + "]]";
         }
 
-        protected internal override void Write(ContentWriter output, object value)
+        public override void Write(ContentWriter output, object value)
         {
             if (_baseType != null)
             {
