@@ -319,7 +319,14 @@ namespace Microsoft.Xna.Framework.Graphics
             else
                 return glyphIdx;
         }
-        
+
+        /// <summary>Uses same texture. Can be used to change line height</summary>
+        public SpriteFont CloneShallow()
+        {
+            var clone = (SpriteFont)MemberwiseClone();
+            return clone;
+        }
+
         internal struct CharacterSource 
         {
 			private readonly string _string;
