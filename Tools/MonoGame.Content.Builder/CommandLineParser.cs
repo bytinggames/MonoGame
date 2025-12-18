@@ -171,21 +171,39 @@ namespace MonoGame.Content.Builder
         {
             if (arg.StartsWith("$endif"))
             {
+                if (ifstack.Count == 0)
+                    throw new Exception("Unexpected $endif.");
+
                 ifstack.Pop();
                 return;
             }
 
-            if (ifstack.Count > 0)
+            if (arg.StartsWith("$if "))
             {
-                foreach (var ifCondition in ifstack)
-                {
-                    var expected = ifCondition.Value;
-                    string actual;
-                    if (!_properties.TryGetValue(ifCondition.Key, out actual))
-                        return;
-                    if (expected != string.Empty && !expected.Equals(actual))
-                        return;
-                }
+                if (!inResponseFile)
+                    throw new Exception("$if is invalid outside of a response file.");
+
+                var words = arg.Substring(4).Split('=');
+                var name = words[0].Trim();
+                var value = words.Length > 1 ? words[1].Trim() : string.Empty;
+
+                // Invariant: ifstack[^1].IsActive == false implies
+                // at least one enclosing condition is inactive.
+                bool parentTrue = ifstack.Count == 0 || ifstack.Peek().IsTrue;
+
+                bool thisActive = parentTrue &&
+                    _properties.TryGetValue(name, out var actual) &&
+                    (value == string.Empty || value.Equals(actual));
+
+                ifstack.Push(new IfCondition(name, value, thisActive));
+                return;
+            }
+
+            // Invariant: ifstack[^1].IsActive == false implies
+            // at least one enclosing condition is inactive.
+            if (ifstack.Count > 0 && !ifstack.Last().IsTrue)
+            {
+                return;
             }
 
             if (arg.StartsWith("$set "))
@@ -200,20 +218,6 @@ namespace MonoGame.Content.Builder
                 return;
             }
 
-            if (arg.StartsWith("$if "))
-            {
-                if (!inResponseFile)
-                    throw new Exception("$if is invalid outside of a response file.");
-
-                var words = arg.Substring(4).Split('=');
-                var name = words[0].Trim();
-                var value = words.Length > 1 ? words[1].Trim() : string.Empty;
-
-                var condition = new IfCondition(name, value);
-                ifstack.Push(condition);
-
-                return;
-            }
 
             if (arg.StartsWith("/define:") || arg.StartsWith("--define:"))
             {
@@ -595,11 +599,13 @@ namespace MonoGame.Content.Builder
         {
             public readonly string Key;
             public readonly string Value;
+            public bool IsTrue;
 
-            public IfCondition(string key, string value)
+            public IfCondition(string key, string value, bool isTrue)
             {
                 Key = key;
                 Value = value;
+                IsTrue = isTrue;
             }
         }
     }

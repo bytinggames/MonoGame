@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////
 
 var target = Argument("build-target", "Default");
-var version = Argument("build-version", EnvironmentVariable("BUILD_NUMBER") ?? "3.8.1.32"); // also update version number in MonoGame.Props
+var version = Argument("build-version", EnvironmentVariable("BUILD_NUMBER") ?? "3.8.1.48"); // also update version number in MonoGame.Props
 var repositoryUrl = Argument("repository-url", "https://github.com/bytinggames/MonoGame");
 var configuration = Argument("build-configuration", "Release");
 
@@ -330,13 +330,15 @@ Task("BuildAll")
 //    .IsDependentOn("BuildiOS")
 //    .IsDependentOn("BuildUWP")
     .IsDependentOn("BuildContentPipeline")
-    .IsDependentOn("BuildTools");
+    .IsDependentOn("BuildTools")
+	;
 
 Task("Pack")
     .IsDependentOn("BuildAll")
     .IsDependentOn("PackDotNetTemplates")
     .IsDependentOn("PackVSMacTemplates")
-    .IsDependentOn("PackVSTemplates");
+    .IsDependentOn("PackVSTemplates")
+	;
 
 Task("Test")
     .IsDependentOn("TestWindowsDX")
