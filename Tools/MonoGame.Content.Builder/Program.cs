@@ -15,9 +15,11 @@ namespace MonoGame.Content.Builder
         {
             if (testSE)
             {
+                bool demo = false;
+
                 Environment.CurrentDirectory = "C:\\Projects\\SE\\SE\\";
 
-                string additionalArgs = "/define:Debug /define:Configuration=Debug /define:RuntimeIdentifier= /define:ConfigRuntime=Debug_ /@:C:\\Projects\\SE\\SE\\Content\\Content.Generated.mgcb";
+                string additionalArgs = $"/define:Debug /define:Demo={(demo ? "true" : "false")} /define:Configuration=Debug /define:RuntimeIdentifier= /define:ConfigRuntime=Debug_ /@:C:\\Projects\\SE\\SE\\Content\\Content.Generated.mgcb";
 
                 args = [
                     //"/rebuildOnVersionUpdate:true",

@@ -160,14 +160,14 @@ namespace MonoGame.Content.Builder
         private IEnumerable<string> Preprocess(IEnumerable<string> args)
         {
             var output = new List<string>();
-            var ifstack = new Stack<IfCondition>();
+            var ifstack = new Stack<bool>();
             foreach (var arg in args)
                 ParsePreprocessArg(arg, output, ifstack, false);
 
             return output.ToArray();
         }
 
-        private void ParsePreprocessArg(string arg, List<string> output, Stack<IfCondition> ifstack, bool inResponseFile)
+        private void ParsePreprocessArg(string arg, List<string> output, Stack<bool> ifstack, bool inResponseFile)
         {
             if (arg.StartsWith("$endif"))
             {
@@ -183,25 +183,28 @@ namespace MonoGame.Content.Builder
                 if (!inResponseFile)
                     throw new Exception("$if is invalid outside of a response file.");
 
-                var words = arg.Substring(4).Split('=');
-                var name = words[0].Trim();
-                var value = words.Length > 1 ? words[1].Trim() : string.Empty;
 
                 // Invariant: ifstack[^1].IsActive == false implies
                 // at least one enclosing condition is inactive.
-                bool parentTrue = ifstack.Count == 0 || ifstack.Peek().IsTrue;
+                bool parentTrue = ifstack.Count == 0 || ifstack.Peek();
+                bool thisActive = parentTrue;
+                if (parentTrue)
+                {
+                    // only if parent is true, it is relevant to check if the child is also true
+                    var words = arg.Substring(4).Split('=');
+                    var name = words[0].Trim();
+                    var value = words.Length > 1 ? words[1].Trim() : string.Empty;
 
-                bool thisActive = parentTrue &&
-                    _properties.TryGetValue(name, out var actual) &&
-                    (value == string.Empty || value.Equals(actual));
-
-                ifstack.Push(new IfCondition(name, value, thisActive));
+                    thisActive = _properties.TryGetValue(name, out var actual) &&
+                        (value == string.Empty || value.Equals(actual));
+                }
+                ifstack.Push(thisActive);
                 return;
             }
 
             // Invariant: ifstack[^1].IsActive == false implies
             // at least one enclosing condition is inactive.
-            if (ifstack.Count > 0 && !ifstack.Last().IsTrue)
+            if (ifstack.Count > 0 && !ifstack.Peek())
             {
                 return;
             }
@@ -593,20 +596,6 @@ namespace MonoGame.Content.Builder
         static T GetAttribute<T>(ICustomAttributeProvider provider) where T : Attribute
         {
             return provider.GetCustomAttributes(typeof(T), false).OfType<T>().FirstOrDefault();
-        }
-
-        private struct IfCondition
-        {
-            public readonly string Key;
-            public readonly string Value;
-            public bool IsTrue;
-
-            public IfCondition(string key, string value, bool isTrue)
-            {
-                Key = key;
-                Value = value;
-                IsTrue = isTrue;
-            }
         }
     }
 
